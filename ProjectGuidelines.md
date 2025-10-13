@@ -137,7 +137,7 @@ refactor: simplify repository pattern
 
 - Any structure or naming change must be discussed first.
 - Everyone pushes work to their feature branch daily.
-- No merge to `develop` without review approval.
+- No merge to `Master` without review approval.
 
 ---
 
