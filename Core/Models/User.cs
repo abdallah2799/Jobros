@@ -5,23 +5,14 @@ using System.Collections.Generic;
 
 namespace Core.Models;
 
-public partial class User
+public abstract class User
 {
     public int Id { get; set; }
-
     public string FullName { get; set; }
-
     public string Email { get; set; }
-
     public string PasswordHash { get; set; }
-
-    public string Role { get; set; }
-
     public bool IsActive { get; set; }
-
     public DateTime CreatedAt { get; set; }
-
-    public virtual EmployerProfile EmployerProfile { get; set; }
-
-    public virtual JobSeekerProfile JobSeekerProfile { get; set; }
+    // The 'Role' property is gone!
+    // The 'EmployerProfile' and 'JobSeekerProfile' properties are gone!
 }
