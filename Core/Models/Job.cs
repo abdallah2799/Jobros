@@ -35,5 +35,5 @@ public partial class Job
 
     public virtual Category Category { get; set; }
 
-    public virtual EmployerProfile Employer { get; set; }
+    public virtual Employer Employer { get; set; }
 }

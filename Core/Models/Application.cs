@@ -21,5 +21,5 @@ public partial class Application
 
     public virtual Job Job { get; set; }
 
-    public virtual JobSeekerProfile JobSeeker { get; set; }
+    public virtual JobSeeker JobSeeker { get; set; }
 }
