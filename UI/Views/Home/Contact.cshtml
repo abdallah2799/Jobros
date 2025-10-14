@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "Contact";
+}
+
+<div class="d-flex flex-column justify-content-center align-items-center py-5" style="flex: 1;">
+    <div class="card shadow" style="width: 700px; border-radius: 25px; border: 2px solid #ccc;">
+        
+
+        <!-- Card Header -->
+        <div class="card-header d-flex align-items-center justify-content-center"
+             style="background: linear-gradient(45deg, #00B074, #00B074); border-radius: 25px 25px 0 0; padding: 1rem 2rem;">
+            <i class="fas fa-envelope fa-lg me-2" style="color: black; font-size: 1.2rem;"></i>
+            <h4 class="mb-0 fw-bold" style="color: black; font-size: 1.5rem;">Send us a Message</h4>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body p-4" style="color: black;">
+            <form id="contact-form">
+                <div class="row g-3">
+                    <!-- First Name -->
+                    <div class="col-md-6">
+                        <label for="firstName" class="form-label fw-semibold">First Name</label>
+                        <input type="text" class="form-control form-input" id="firstName" placeholder="Enter your first name" required>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="col-md-6">
+                        <label for="lastName" class="form-label fw-semibold">Last Name</label>
+                        <input type="text" class="form-control form-input" id="lastName" placeholder="Enter your last name" required>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-12">
+                        <label for="email" class="form-label fw-semibold">Email Address</label>
+                        <input type="email" class="form-control form-input" id="email" placeholder="Enter your email" required>
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="col-12">
+                        <label for="subject" class="form-label fw-semibold">Subject</label>
+                        <select class="form-select form-input" id="subject" required>
+                            <option value="">Select a subject</option>
+                            <option value="account">Account Issue</option>
+                            <option value="job-posting">Job Posting Inquiry</option>
+                            <option value="application">Application Status</option>
+                            <option value="technical">Technical Support</option>
+                            <option value="partnership">Partnership / Collaboration</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="col-12">
+                        <label for="message" class="form-label fw-semibold">Message</label>
+                        <textarea class="form-control form-input" id="message" rows="5" placeholder="Tell us how we can help you..." required></textarea>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="col-12 form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="newsletter">
+                        <label class="form-check-label fw-semibold" for="newsletter">
+                            Subscribe to our newsletter for updates and offers
+                        </label>
+                    </div>
+
+                    <!-- Send Button -->
+                    <div class="d-grid mt-3" style="width: 50%; margin: 0 auto;">
+                        <button type="submit" class="btn btn-add-cart btn-lg"
+                                style="font-size: 1.1rem;
+                                      display: flex;
+                                      align-items: center;
+                                      justify-content: center;
+                                      gap: 0.5rem;
+                                      background: linear-gradient(45deg, #00B074, #00B074);
+                                      border: 2px solid #00B074;
+                                      color: white;
+                                      border-radius: 15px;">
+                            Send Message
+                        </button>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+ 
+

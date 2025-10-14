@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow" style="width: 400px; border-radius: 25px; border: 2px solid #ccc;">
+
+        <!-- Card Header -->
+        <div class="card-header d-flex align-items-center justify-content-center"
+             style="background: linear-gradient(45deg, #00B074, #00B074); border-radius: 25px 25px 0 0; padding: 1rem 2rem;">
+            <i class="fas fa-sign-in-alt fa-lg me-2" style="color: black; font-size: 1.2rem;"></i>
+            <h4 class="mb-0 fw-bold" style="color: black; font-size: 1.5rem;">Login</h4>
+        </div>
+
+        <!-- Form Body -->
+        <div class="card-body p-4" style="color: black;">
+            <form asp-action="Login" asp-controller="Account" method="post">
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="Email" class="form-label fw-semibold">Email</label>
+                    <input type="email" class="form-control form-input" id="Email" name="Email" placeholder="Enter your email" required>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label for="Password" class="form-label fw-semibold">Password</label>
+                    <input type="password" class="form-control form-input" id="Password" name="Password" placeholder="Enter your password" required>
+                </div>
+
+                <!-- Login Button -->
+                <div class="d-grid mt-3">
+                    <button type="submit"
+                            class="btn btn-add-cart btn-lg"
+                            style="font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+                                   background: linear-gradient(45deg, #00B074, #00B074);
+                                   border: 2px solid #00B074;
+                                   color: white;
+                                   border-radius: 15px;">
+                        
+                        Login
+                    </button>
+                </div>
+
+                <!-- Links -->
+                <div class="mt-3 text-center" style="font-size: 0.9rem;">
+                    <span>Don't have an account?</span>
+                    <a asp-controller="Account" asp-action="Register" style="color:#00B074; font-weight:600;">Register</a>
+                </div>
+
+                <div class="mt-2 text-center" style="font-size: 0.9rem;">
+                    <a asp-controller="Account" asp-action="ForgotPassword" style="color:#00B074; font-weight:600;">Forgot Password?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
