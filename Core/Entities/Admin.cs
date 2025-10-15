@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Entities
 {
-    public partial class Admin: User
+    public partial class Admin: ApplicationUser
     {
         // Additional properties or methods specific to Admin can be added here
     }
