@@ -1,0 +1,21 @@
+
+.form-input {
+    border-radius: 15px;
+    border: 2px solid #ccc; 
+    padding: 0.65rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus, .form-input:hover {
+    border-color: #00B074;
+    box-shadow: 0 0 8px rgba(0,176,116,0.3);
+    outline: none;
+}
+
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
