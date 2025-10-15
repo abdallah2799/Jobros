@@ -8,32 +8,21 @@ namespace Core.Entities;
 public partial class Job
 {
     public int Id { get; set; }
-
     public int EmployerId { get; set; }
-
     public int CategoryId { get; set; }
 
     public string Title { get; set; }
-
     public string Description { get; set; }
-
     public string Requirements { get; set; }
-
     public string SalaryRange { get; set; }
-
     public string JobType { get; set; }
-
     public string Location { get; set; }
 
-    public bool IsActive { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
+    public bool IsActive { get; set; } = true;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? ExpirationDate { get; set; }
 
-    public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
-
-    public virtual Category Category { get; set; }
-
     public virtual Employer Employer { get; set; }
+    public virtual Category Category { get; set; }
+    public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
 }
