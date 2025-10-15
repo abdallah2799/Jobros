@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Entities
 {
-    public class Employer : User
+    public partial class Employer : ApplicationUser
     {
         public string CompanyName { get; set; }
         public string Industry { get; set; }
@@ -14,7 +14,6 @@ namespace Core.Entities
         public string Location { get; set; }
         public string Description { get; set; }
 
-        // Navigation property for jobs posted by this employer
         public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();
     }
 }
