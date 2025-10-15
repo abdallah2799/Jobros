@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Core.Models;
+namespace Core.Entities;
 
 public partial class Job
 {
