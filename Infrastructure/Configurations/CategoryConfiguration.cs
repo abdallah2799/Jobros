@@ -14,16 +14,9 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<Category> entity)
         {
-            entity.HasKey(e => e.Id).HasName("PK__Category__3214EC2702E99F44");
-
-            entity.ToTable("Category");
-
-            entity.HasIndex(e => e.Name, "UQ__Category__737584F683D01131").IsUnique();
-
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(100);
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.Name).IsUnique();
         }
     }
 }
