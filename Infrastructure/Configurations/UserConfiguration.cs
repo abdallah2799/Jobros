@@ -1,5 +1,5 @@
 ﻿// 1. FIX THE USING STATEMENTS
-using Core.Models;
+using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
