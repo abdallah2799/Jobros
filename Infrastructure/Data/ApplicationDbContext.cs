@@ -21,6 +21,16 @@ namespace Infrastructure.Data
             base.OnModelCreating(builder);
 
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            // Optional: rename Identity table names for clarity
+            builder.Entity<ApplicationUser>().ToTable("Users");
+            builder.Entity<IdentityRole<int>>().ToTable("Roles");
+            builder.Entity<IdentityUserRole<int>>().ToTable("UserRoles");
+            builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
+            builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
+            builder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims");
+            builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
         }
+
     }
 }
