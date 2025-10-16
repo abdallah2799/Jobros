@@ -13,26 +13,28 @@ namespace Infrastructure.UnitOfWorks
 {
     internal class UnitOfWork : IUnitOfWork
     {
-        ApplicationDbContext db;
-         public UnitOfWork(ApplicationDbContext db)
-          {
-                this.db = db;
-        }
+        private readonly ApplicationDbContext db;
+
         private IRepository<Job>? _jobs;
         private IRepository<Category>? _categories;
         private IRepository<Application>? _applications;
-       IRepository<Job> IUnitOfWork.Jobs{get{return _jobs ??= new Repository<Job>(db);}}
-
-        IRepository<Category> IUnitOfWork.Categories { get { return _categories ??= new Repository<Category>(db); } }
-
-        IRepository<Application> IUnitOfWork.Applications { get { return _applications ??= new Repository<Application>(db); } }
-
-        async Task<int> IUnitOfWork.CompleteAsync()
+        public UnitOfWork(ApplicationDbContext db)
         {
-          return await db.SaveChangesAsync();
+            this.db = db;
         }
 
-        void IDisposable.Dispose()
+        public IRepository<Job> Jobs => _jobs ??= new Repository<Job>(db);
+
+        public IRepository<Category> Categories => _categories ??= new Repository<Category>(db);
+
+        public IRepository<Application> Applications => _applications ??= new Repository<Application>(db);
+
+        public async Task<int> CompleteAsync()
+        {
+            return await db.SaveChangesAsync();
+        }
+
+        public void Dispose()
         {
             db.Dispose();
         }
