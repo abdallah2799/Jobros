@@ -15,10 +15,12 @@ namespace Core.Interfaces.Repositories
 
     internal class Repository<T> : IRepository<T> where T : class
     {
-      ApplicationDbContext db;
+        readonly ApplicationDbContext db;
+        readonly DbSet<T> _dbSet;
         public Repository(ApplicationDbContext db)
         {
             this.db= db;
+            _dbSet = db.Set<T>();
         }
           async Task IRepository<T>.AddAsync(T entity)
         {
@@ -27,7 +29,7 @@ namespace Core.Interfaces.Repositories
 
         IQueryable<T> IRepository<T>.AsQueryable()
         {
-            throw new NotImplementedException();
+            return _dbSet.AsQueryable();
         }
 
         void IRepository<T>.Delete(T entity)
@@ -54,7 +56,7 @@ namespace Core.Interfaces.Repositories
 
         void IRepository<T>.Update(T entity)
         {
-            db.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            db.Entry(entity).State = EntityState.Modified;
         }
     }
 }
