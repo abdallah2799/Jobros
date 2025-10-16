@@ -15,14 +15,14 @@ namespace Core.Interfaces.Repositories
 
     internal class Repository<T> : IRepository<T> where T : class
     {
-        UnitOfWork unit;
-        public Repository(UnitOfWork unit)
+        ApplicationDbContext db;
+        public Repository(ApplicationDbContext db)
         {
-            this.unit= unit;
+            this.db= db;
         }
           async Task IRepository<T>.AddAsync(T entity)
         {
-          await  unit.db.Set<T>().AddAsync(entity);
+          await  db.Set<T>().AddAsync(entity);
         }
 
         IQueryable<T> IRepository<T>.AsQueryable()
@@ -32,29 +32,29 @@ namespace Core.Interfaces.Repositories
 
         void IRepository<T>.Delete(T entity)
         {
-            unit.db.Set<T>().Remove(entity);
+            db.Set<T>().Remove(entity);
         }
 
          async Task<IEnumerable<T>> IRepository<T>.FindAsync(Expression<Func<T, bool>> predicate)
         {
             
-            return await  unit.db.Set<T>().Where(predicate).ToListAsync(); ;
+            return await  db.Set<T>().Where(predicate).ToListAsync(); ;
             
         }
 
         async Task<IEnumerable<T>> IRepository<T>.GetAllAsync()
         {
-           return await unit.db.Set<T>().ToListAsync();
+           return await db.Set<T>().ToListAsync();
         }
 
         async Task<T?> IRepository<T>.GetByIdAsync(int id)
         {
-          return await  unit.db.Set<T>().FindAsync(id);
+          return await  db.Set<T>().FindAsync(id);
         }
 
         void IRepository<T>.Update(T entity)
         {
-            unit.db.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            db.Entry(entity).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         }
     }
 }

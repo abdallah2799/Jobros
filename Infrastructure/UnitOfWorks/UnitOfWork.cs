@@ -12,7 +12,7 @@ namespace Infrastructure.UnitOfWorks
 {
     internal class UnitOfWork : IUnitOfWork
     {
-       public ApplicationDbContext db;
+        ApplicationDbContext db;
          public UnitOfWork(ApplicationDbContext db)
           {
                 this.db = db;
