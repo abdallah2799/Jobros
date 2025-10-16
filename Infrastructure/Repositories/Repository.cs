@@ -9,11 +9,11 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Interfaces.Repositories
+namespace Infrastructure.Repositories
 {
     
 
-    internal class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         readonly ApplicationDbContext db;
         readonly DbSet<T> _dbSet;
