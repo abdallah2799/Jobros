@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Core.Interfaces.IRepositories;
 using Core.Interfaces.IUnitOfWorks;
+using Core.Interfaces.Repositories;
 using Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -17,21 +18,23 @@ namespace Infrastructure.UnitOfWorks
           {
                 this.db = db;
         }
+        private IRepository<Job>? _jobs;
+        private IRepository<Category>? _categories;
+        private IRepository<Application>? _applications;
+       IRepository<Job> IUnitOfWork.Jobs{get{return _jobs ??= new Repository<Job>(db);}}
 
-        IRepository<Job> IUnitOfWork.Jobs => throw new NotImplementedException();
+        IRepository<Category> IUnitOfWork.Categories { get { return _categories ??= new Repository<Category>(db); } }
 
-        IRepository<Category> IUnitOfWork.Categories => throw new NotImplementedException();
+        IRepository<Application> IUnitOfWork.Applications { get { return _applications ??= new Repository<Application>(db); } }
 
-        IRepository<Application> IUnitOfWork.Applications => throw new NotImplementedException();
-
-        Task<int> IUnitOfWork.CompleteAsync()
+        async Task<int> IUnitOfWork.CompleteAsync()
         {
-            throw new NotImplementedException();
+          return await db.SaveChangesAsync();
         }
 
         void IDisposable.Dispose()
         {
-            throw new NotImplementedException();
+            db.Dispose();
         }
     }
 }
