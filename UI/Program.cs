@@ -1,5 +1,8 @@
 ﻿using Core.Entities;
+using Core.Interfaces.IUnitOfWorks;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
+using Infrastructure.UnitOfWorks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,8 +27,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+// Register Unit Of Work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
 // Add MVC Controllers + Views
 builder.Services.AddControllersWithViews();
+
+
 
 var app = builder.Build();
 
