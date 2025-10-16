@@ -15,7 +15,7 @@ namespace Core.Interfaces.Repositories
 
     internal class Repository<T> : IRepository<T> where T : class
     {
-        ApplicationDbContext db;
+      ApplicationDbContext db;
         public Repository(ApplicationDbContext db)
         {
             this.db= db;
