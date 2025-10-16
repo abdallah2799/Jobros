@@ -11,13 +11,13 @@ namespace Core.Interfaces.IUnitOfWorks
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
-        IRepository<Job> Jobs { get; }
-        IRepository<Category> Categories { get; }
-        IRepository<Application> Applications { get; }
+        public IRepository<Job> Jobs { get; }
+        public IRepository<Category> Categories { get; }
+        public IRepository<Application> Applications { get; }
 
         /// <summary>
         /// Commit all changes in a single transaction (or save changes).
         /// </summary>
-        Task<int> CompleteAsync();
+        public Task<int> CompleteAsync();
     }
 }
