@@ -11,5 +11,7 @@ namespace Core.Interfaces.IServices.Commands
         Task<int> CreateAsync(TDto dto);        // returns created id or status code
         Task UpdateAsync(int id, TDto dto);
         Task DeleteAsync(int id);
+
+
     }
 }
