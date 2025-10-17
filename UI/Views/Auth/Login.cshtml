@@ -14,7 +14,7 @@
 
         <!-- Form Body -->
         <div class="card-body p-4" style="color: black;">
-            <form asp-action="Login" asp-controller="Account" method="post">
+            <form asp-action="Login" asp-controller="Auth" method="post">
                 <!-- Email -->
                 <div class="mb-3">
                     <label for="Email" class="form-label fw-semibold">Email</label>
@@ -44,11 +44,11 @@
                 <!-- Links -->
                 <div class="mt-3 text-center" style="font-size: 0.9rem;">
                     <span>Don't have an account?</span>
-                    <a asp-controller="Account" asp-action="Register" style="color:#00B074; font-weight:600;">Register</a>
+                    <a asp-controller="Auth" asp-action="Register" style="color:#00B074; font-weight:600;">Register</a>
                 </div>
 
                 <div class="mt-2 text-center" style="font-size: 0.9rem;">
-                    <a asp-controller="Account" asp-action="ForgotPassword" style="color:#00B074; font-weight:600;">Forgot Password?</a>
+                    <a asp-controller="Auth" asp-action="ForgotPassword" style="color:#00B074; font-weight:600;">Forgot Password?</a>
                 </div>
             </form>
         </div>

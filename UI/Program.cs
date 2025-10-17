@@ -1,21 +1,26 @@
-﻿using Core.Entities;
+﻿using Application.DTO_Mappers;
+using AutoMapper;
+using Application.Services;
+using Core.Entities;
+using Core.Interfaces.IServices.IAuth;
 using Core.Interfaces.IUnitOfWorks;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.UnitOfWorks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Connection String
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Register DbContext
+// DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Register Identity
+// Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 {
     options.Password.RequireDigit = true;
@@ -27,12 +32,25 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Register Unit Of Work
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
+});
+
+// Unit of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Auth Service
+builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Add MVC Controllers + Views
+// AutoMapper
+builder.Services.AddAutoMapper(op => op.AddProfile(typeof(MappingProfile)));
+builder.Services.AddTransient<RoleResolver>();
+
+// MVC
 builder.Services.AddControllersWithViews();
+
 
 
 
