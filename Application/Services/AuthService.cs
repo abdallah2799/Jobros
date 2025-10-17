@@ -2,8 +2,12 @@
 using Core.DTOs.Auth;
 using Core.Entities; // where ApplicationUser, Employer, JobSeeker, etc. live
 using Core.Interfaces.IServices.IAuth;
+using Core.Interfaces.IServices.IEmailServices;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace Application.Services
 {
@@ -12,17 +16,23 @@ namespace Application.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole<int>> roleManager,
+            IHttpContextAccessor httpContextAccessor,
+            IEmailService emailService,
             IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _httpContextAccessor = httpContextAccessor;
+            _emailService = emailService;
             _mapper = mapper;
         }
 
@@ -92,6 +102,20 @@ namespace Application.Services
             // 5. Assign role
             await _userManager.AddToRoleAsync(user, dto.Role);
 
+            // after _userManager.CreateAsync(user, dto.Password)
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            // build URL with token and userId
+            var confirmUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/Auth/ConfirmEmail?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+
+            // send confirmation email
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "Confirm your Jobros account",
+                $"<h3>Welcome to Jobros, {user.FullName}!</h3><p>Please confirm your email by clicking the link below:</p><p><a href='{confirmUrl}'>Confirm Email</a></p>"
+            );
+
+
             // 6. Return safe data
             return _mapper.Map<UserResponseDTO>(user);
         }
@@ -101,49 +125,80 @@ namespace Application.Services
         // -----------------------------
         public async Task<UserResponseDTO> LoginAsync(UserLoginDTO dto)
         {
+            // 1️⃣ Find the user by email
             var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user == null)
-                throw new Exception("Invalid credentials");
+                throw new Exception("Invalid credentials.");
 
+            // 2️⃣ Check if account is active
             if (!user.IsActive)
-                throw new Exception("Account is inactive");
+                throw new Exception("Your account is inactive. Please contact support.");
 
+            // 3️⃣ Check if email is confirmed
+            if (!user.EmailConfirmed)
+                throw new Exception("Please confirm your email before logging in. Check your inbox or spam folder.");
+
+            // 4️⃣ Validate password
             var result = await _signInManager.PasswordSignInAsync(user, dto.Password, isPersistent: false, lockoutOnFailure: false);
-            Console.WriteLine(dto.Password+$"\n {result.IsNotAllowed}");
             if (!result.Succeeded)
-                throw new Exception("Invalid login attempt");
+                throw new Exception("Invalid email or password.");
 
+            // 5️⃣ Return mapped DTO
             return _mapper.Map<UserResponseDTO>(user);
         }
+
         // -----------------------------
         // ForgetPassword
         // -----------------------------
         public async Task ForgotPasswordAsync(string email)
         {
+            // 1️⃣ Check if user exists
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
                 throw new Exception("No account found with that email.");
 
+            // 2️⃣ Generate password reset token
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            // Normally, you’d send this token via email using a proper service
-            // For now, just log or display it temporarily (for testing)
-            Console.WriteLine($"Reset token for {email}: {token}");
-            // Later, you'll email it via a real EmailService
+            // 3️⃣ Build secure reset URL (same domain)
+            var resetUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/Auth/ResetPassword?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(token)}";
+
+            // 4️⃣ Compose email content
+            var subject = "Reset your Jobros account password";
+            var body = $@"
+        <h3>Hello {user.FullName},</h3>
+        <p>We received a request to reset your Jobros account password.</p>
+        <p>To proceed, click the link below:</p>
+        <p><a href='{resetUrl}' style='color:#00B074;font-weight:bold;'>Reset Password</a></p>
+        <p>If you didn’t request this, you can safely ignore this email.</p>
+        <br>
+        <p>– The Jobros Team</p>
+    ";
+
+            // 5️⃣ Send email using existing service
+            await _emailService.SendEmailAsync(user.Email, subject, body);
+
+            Console.WriteLine($"✅ Password reset email sent to {email}");
         }
+
 
         public async Task<bool> ResetPasswordAsync(string email, string token, string newPassword)
         {
+            // 1️⃣ Validate user
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-                throw new Exception("Invalid request.");
+                throw new Exception("Invalid reset link or email.");
 
+            // 2️⃣ Reset password with token
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
             if (!result.Succeeded)
                 throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
 
+            // 3️⃣ Success
             return true;
         }
+
 
         //-------------------------
         // Check If Email Already Registered
