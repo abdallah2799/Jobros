@@ -1,7 +1,9 @@
 ﻿using Core.DTOs.Auth;
+using Core.Entities;
 using Core.Interfaces;
 using Core.Interfaces.IServices.IAuth;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace UI.Controllers
@@ -10,9 +12,11 @@ namespace UI.Controllers
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthController(IAuthService authService)
+        public AuthController(UserManager<ApplicationUser> userManager, IAuthService authService)
         {
+            _userManager = userManager;
             _authService = authService;
         }
 
@@ -59,6 +63,34 @@ namespace UI.Controllers
             return Json(new { exists });
         }
 
+
+        //----------------------------
+        // Confirm Email 
+        //---------------------------
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(int userId, string token)
+        {
+            if (userId == 0 || string.IsNullOrEmpty(token))
+                return BadRequest("Invalid email confirmation request.");
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return NotFound("User not found.");
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                // Mark success message
+                TempData["SuccessMessage"] = "🎉 Email confirmed! You can now log in to your Jobros account.";
+                return RedirectToAction("Login", "Auth");
+            }
+
+            TempData["ErrorMessage"] = "❌ Email confirmation failed. The link may have expired or already been used.";
+            return RedirectToAction("Login", "Auth");
+        }
+
+
         #endregion
 
         #region Login
@@ -85,7 +117,13 @@ namespace UI.Controllers
             {
                 var user = await _authService.LoginAsync(dto);
 
-                // Redirect based on role
+                // Log successful login info
+                Console.WriteLine($"✅ Login successful for {user.FullName} ({user.Email}) — Role: {user.Role}");
+
+                // Display success toast
+                TempData["SuccessMessage"] = $"Welcome back, {user.FullName}!";
+
+                // Redirect based on role (you can update these when dashboards are ready)
                 //return user.Role switch
                 //{
                 //    "Admin" => RedirectToAction("Dashboard", "Admin"),
@@ -102,19 +140,24 @@ namespace UI.Controllers
 
                 // Redirect to Home for now
                 return RedirectToAction("Index", "Home");
-
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"{ex.Message}");
-                ModelState.AddModelError(string.Empty, ex.Message);
+                // Log and show error toast
+                Console.WriteLine($"❌ Login error: {ex.Message}");
+                TempData["ErrorMessage"] = ex.Message;
+
+                // Return to same page with model state intact
                 return View(dto);
             }
         }
+
         #endregion
 
         #region ForgetPassword
-        // Step 1: Request reset
+        #region Forgot Password
+
+        // Step 1: Ask user for email
         [HttpGet]
         public IActionResult ForgotPassword()
         {
@@ -125,43 +168,54 @@ namespace UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(string email)
         {
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrWhiteSpace(email))
             {
-                ModelState.AddModelError("", "Please enter your email address.");
+                TempData["ErrorMessage"] = "Please enter your email address.";
                 return View();
             }
 
             try
             {
                 await _authService.ForgotPasswordAsync(email);
-                TempData["SuccessMessage"] = "Password reset link has been sent (check console for token during testing).";
+                TempData["SuccessMessage"] = "Password reset link has been sent to your email.";
                 return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                TempData["ErrorMessage"] = ex.Message;
                 return View();
             }
         }
 
-        // Step 2: Reset password form
+        // Step 2: Opened from email link (GET)
         [HttpGet]
         public IActionResult ResetPassword(string email, string token)
         {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
+            {
+                TempData["ErrorMessage"] = "Invalid password reset link.";
+                return RedirectToAction("Login");
+            }
+
             ViewBag.Email = email;
             ViewBag.Token = token;
             return View();
         }
 
+        // Step 3: Submit new password
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword(string email, string token, string newPassword)
+        public async Task<IActionResult> ResetPassword(string email, string token, string newPassword, string confirmPassword)
         {
-            if (string.IsNullOrEmpty(newPassword))
+            if (string.IsNullOrWhiteSpace(newPassword))
             {
-                ModelState.AddModelError("", "Password is required.");
-                ViewBag.Email = email;
-                ViewBag.Token = token;
+                TempData["ErrorMessage"] = "Please enter a new password.";
+                return View();
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                TempData["ErrorMessage"] = "Passwords do not match.";
                 return View();
             }
 
@@ -176,13 +230,16 @@ namespace UI.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                TempData["ErrorMessage"] = ex.Message;
             }
 
             ViewBag.Email = email;
             ViewBag.Token = token;
             return View();
         }
+
+        #endregion
+
         #endregion
 
         #region Logout

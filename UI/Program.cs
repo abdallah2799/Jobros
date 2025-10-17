@@ -1,17 +1,21 @@
 ﻿using Application.DTO_Mappers;
-using AutoMapper;
 using Application.Services;
+using AutoMapper;
 using Core.Entities;
+using Core.Interfaces.IServices.Commands;
 using Core.Interfaces.IServices.IAuth;
+using Core.Interfaces.IServices.IEmailServices;
+using Core.Interfaces.IServices.IQueries;
 using Core.Interfaces.IUnitOfWorks;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Infrastructure.UnitOfWorks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Core.Interfaces.IServices.Commands;
-using Core.Interfaces.IServices.IQueries;
+using SendGrid;
+using SendGrid.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +38,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddHttpContextAccessor();
+
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Auth/Login";
@@ -45,6 +52,16 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Auth Service
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Email Service
+builder.Services.AddSendGrid(options =>
+{
+    options.ApiKey = builder.Configuration["SendGrid:ApiKey"]
+                     ?? Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+});
+
+builder.Services.AddScoped<IEmailService, SendGridEmailService>();
+
 
 // JobSeeker services
 builder.Services.AddScoped<IJobSeekerQueryService, JobSeekerService>();
@@ -60,6 +77,7 @@ builder.Services.AddControllersWithViews();
 
 
 var app = builder.Build();
+
 
 // Automatic Seeding on Startup
 using (var scope = app.Services.CreateScope())
