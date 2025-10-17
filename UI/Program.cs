@@ -10,6 +10,8 @@ using Infrastructure.UnitOfWorks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Core.Interfaces.IServices.Commands;
+using Core.Interfaces.IServices.IQueries;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,13 +46,16 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Auth Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// JobSeeker services
+builder.Services.AddScoped<IJobSeekerQueryService, JobSeekerService>();
+builder.Services.AddScoped<IJobSeekerCommandService, JobSeekerService>();
+
 // AutoMapper
 builder.Services.AddAutoMapper(op => op.AddProfile(typeof(MappingProfile)));
 builder.Services.AddTransient<RoleResolver>();
 
 // MVC
 builder.Services.AddControllersWithViews();
-
 
 
 
