@@ -1,18 +1,32 @@
-﻿using Core.Entities;
+﻿using Application.DTO_Mappers;
+using Application.Services;
+using AutoMapper;
+using Core.Entities;
+using Core.Interfaces.IServices.Commands;
+using Core.Interfaces.IServices.IAuth;
+using Core.Interfaces.IServices.IEmailServices;
+using Core.Interfaces.IServices.IQueries;
+using Core.Interfaces.IUnitOfWorks;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
+using Infrastructure.Services;
+using Infrastructure.UnitOfWorks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using SendGrid;
+using SendGrid.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Connection String
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Register DbContext
+// DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Register Identity
+// Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 {
     options.Password.RequireDigit = true;
@@ -24,10 +38,46 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Add MVC Controllers + Views
+builder.Services.AddHttpContextAccessor();
+
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
+});
+
+// Unit of Work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Auth Service
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Email Service
+builder.Services.AddSendGrid(options =>
+{
+    options.ApiKey = builder.Configuration["SendGrid:ApiKey"]
+                     ?? Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+});
+
+builder.Services.AddScoped<IEmailService, SendGridEmailService>();
+
+
+// JobSeeker services
+builder.Services.AddScoped<IJobSeekerQueryService, JobSeekerService>();
+builder.Services.AddScoped<IJobSeekerCommandService, JobSeekerService>();
+
+// AutoMapper
+builder.Services.AddAutoMapper(op => op.AddProfile(typeof(MappingProfile)));
+builder.Services.AddTransient<RoleResolver>();
+
+// MVC
 builder.Services.AddControllersWithViews();
 
+
+
 var app = builder.Build();
+
 
 // Automatic Seeding on Startup
 using (var scope = app.Services.CreateScope())

@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Job Portal System</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="" name="description">
+    <title>Jobros - Job Portal System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Favicon -->
     <link href="~/img/favicon.ico" rel="icon">
@@ -15,34 +13,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
 
-    <!-- Icon Font Stylesheet -->
+    <!-- Icon Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Libraries Stylesheet -->
+    <!-- Libraries -->
     <link href="~/lib/animate/animate.min.css" rel="stylesheet">
     <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
-    <!-- Customized Bootstrap Stylesheet -->
+    <!-- Bootstrap & Main CSS -->
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Template Stylesheet -->
     <link href="~/css/style.css" rel="stylesheet">
 </head>
-<body>
 
+<body>
     <div class="d-flex flex-column min-vh-100">
         <partial name="_NavPV"></partial>
+
         <main class="flex-fill">
             @RenderBody()
         </main>
+
         <partial name="_FooterPV"></partial>
-        <!-- Footer End -->
+
         <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top">
+            <i class="bi bi-arrow-up"></i>
+        </a>
     </div>
 
-    <!-- JavaScript Libraries -->
+    <!-- ================= Toast Container ================= -->
+    <div aria-live="polite" aria-atomic="true"
+         class="position-fixed bottom-0 end-0 p-3"
+         style="z-index: 1100;">
+        <div id="toastWrapper"></div>
+    </div>
+
+    <!-- ================= JavaScript Libraries ================= -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/wow/wow.min.js"></script>
@@ -50,9 +57,68 @@
     <script src="~/lib/waypoints/waypoints.min.js"></script>
     <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
 
-    <!-- Template Javascript -->
+    <!-- ================= Template Main JS ================= -->
     <script src="~/js/main.js"></script>
 
+    <!-- ================= Toast Logic Script ================= -->
+    <script>
+        // Universal toast handler
+        function showToast(message, type = "success") {
+            const icons = {
+                success: "✅",
+                error: "❌",
+                warning: "⚠️",
+                info: "ℹ️"
+            };
+
+            const bgClass = {
+                success: "bg-success text-white",
+                error: "bg-danger text-white",
+                warning: "bg-warning text-dark",
+                info: "bg-info text-dark"
+            }[type] || "bg-primary text-white";
+
+            const toastId = `toast-${Date.now()}`;
+            const html = `
+                <div id="${toastId}" class="toast align-items-center ${bgClass} border-0 shadow-sm mb-2"
+                     role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
+                    <div class="d-flex">
+                        <div class="toast-body fw-semibold">${icons[type]} ${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                                data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>`;
+
+            const wrapper = document.getElementById("toastWrapper");
+            wrapper.insertAdjacentHTML("beforeend", html);
+
+            const toastEl = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            toastEl.addEventListener("hidden.bs.toast", () => toastEl.remove());
+        }
+
+        // Auto-toast support for TempData
+        @if (TempData["SuccessMessage"] != null)
+        {
+                <text>showToast('@TempData["SuccessMessage"]', 'success');</text>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+                <text>showToast('@TempData["ErrorMessage"]', 'error');</text>
+        }
+        @if (TempData["WarningMessage"] != null)
+        {
+                <text>showToast('@TempData["WarningMessage"]', 'warning');</text>
+        }
+        @if (TempData["InfoMessage"] != null)
+        {
+                <text>showToast('@TempData["InfoMessage"]', 'info');</text>
+        }
+    </script>
+
+    <!-- ================= Page-Specific Scripts ================= -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

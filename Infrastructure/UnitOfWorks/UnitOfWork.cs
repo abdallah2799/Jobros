@@ -1,7 +1,7 @@
 ﻿using Core.Entities;
 using Core.Interfaces.IRepositories;
 using Core.Interfaces.IUnitOfWorks;
-using Core.Interfaces.Repositories;
+using Infrastructure.Repositories;
 using Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.UnitOfWorks
 {
-    internal class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext db;
 

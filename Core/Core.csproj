@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Enums\" />
-    <Folder Include="DTOs\" />
+    <Folder Include="Interfaces\IServices\Queries\" />
   </ItemGroup>
 
   <ItemGroup>
