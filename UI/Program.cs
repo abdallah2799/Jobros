@@ -56,8 +56,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // Email Service
 builder.Services.AddSendGrid(options =>
 {
-    options.ApiKey = builder.Configuration["SendGrid:ApiKey"]
-                     ?? Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+    options.ApiKey = builder.Configuration["SendGrid:ApiKey"]?? Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
 });
 
 builder.Services.AddScoped<IEmailService, SendGridEmailService>();
