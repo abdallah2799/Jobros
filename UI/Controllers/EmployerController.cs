@@ -64,6 +64,27 @@ namespace UI.Controllers
             ViewBag.EmployerId = employerId;
             return View(model);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditJob(int jobId, int employerId, EditJobDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.JobId = jobId;
+                ViewBag.EmployerId = employerId;
+                return View(model);
+            }
+            var isUpdated = await _jobService.UpdateJobAsync(jobId, employerId, model);
+
+            if (!isUpdated)
+            {
+                return NotFound(); 
+            }
+
+            return RedirectToAction("JobDetails", new { jobId = jobId, employerId = employerId });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeactivateJob(int jobId, int employerId)
