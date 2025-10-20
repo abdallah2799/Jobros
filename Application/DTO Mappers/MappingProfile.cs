@@ -26,7 +26,16 @@ namespace Application.DTO_Mappers
             CreateMap<ApplicationUser, UserResponseDTO>()
                 .ForMember(dest => dest.Role, opt => opt.MapFrom<RoleResolver>()); 
 
-            
+            // Job -> JobDto
+            CreateMap<Core.Entities.Job, Core.DTOs.Job.JobDto>()
+                .ForMember(d => d.EmployerName, opt => opt.MapFrom(s => s.Employer.CompanyName ?? s.Employer.FullName));
+
+            // Application -> ApplicationDto
+            CreateMap<Core.Entities.Application, Core.DTOs.Application.ApplicationDto>()
+                .ForMember(d => d.JobTitle, opt => opt.MapFrom(s => s.Job.Title));
+
+            // JobSeeker -> JobSeekerDto
+            CreateMap<Core.Entities.JobSeeker, Core.DTOs.JobSeeker.JobSeekerDto>();
         }
     }
 }
