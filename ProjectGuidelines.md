@@ -1,4 +1,3 @@
-
 # 🧭 Project Guidelines – Jobros MVC Solution
 
 ## 🎯 Goal
@@ -21,6 +20,7 @@ Jobros.sln
 │   ├── Configurations
 │   ├── Repositories
 │   ├── Logging
+│   ├── Services
 │
 ├── Application
 │   ├── Services
@@ -42,10 +42,12 @@ Jobros.sln
 > Contains all business contracts and domain logic abstractions.
 
 **Folders:**
-- **Entities:** Table models (e.g., User, Job, Application, Company).
-- **DTOs:** Data Transfer Objects for communication between layers.
-- **Enums:** Constant values (e.g., UserRole, JobType, ApplicationStatus).
+- **Entities:** Table models (e.g., User, Job, Application, Company).  
+- **DTOs:** Data Transfer Objects for communication between layers.  
+- **Enums:** Constant values (e.g., `UserRole`, `JobType`, `ApplicationStatus`).  
 - **Interfaces:** Definitions only (`IRepository`, `IUnitOfWork`, `IService`).
+
+See also: [📘 DatabaseDescription.md](./DatabaseDescription.md)
 
 ---
 
@@ -53,10 +55,13 @@ Jobros.sln
 > Handles data access and external services.
 
 **Folders:**
-- **Data:** Contains `ApplicationDbContext` (inherits from DbContext).
-- **Configurations:** Entity configurations using `IEntityTypeConfiguration<T>`.
-- **Repositories:** Implementations for interfaces in Core (e.g., `GenericRepository<T>`).
-- **Logging:** Code related to logging and exception handling.
+- **Data:** Contains `ApplicationDbContext` (inherits from `DbContext`).  
+- **Configurations:** Entity configurations using `IEntityTypeConfiguration<T>`.  
+- **Repositories:** Implementations for interfaces in Core (e.g., `GenericRepository<T>`).  
+- **Logging:** Centralized logging and exception handling. (See [Jobros_Logging_Guide.md](./Jobros_Logging_Guide.md))  
+- **Services:** Email, reporting, and external API services.  
+  - Email: [Jobros_Email_Service_Guide.md](./Jobros_Email_Service_Guide.md)  
+  - Reporting: [Jobros_Reporting_Guide.md](./Jobros_Reporting_Guide.md)
 
 ---
 
@@ -64,8 +69,8 @@ Jobros.sln
 > Contains business logic and service layer implementations.
 
 **Folders:**
-- **Services:** Business logic classes between UI and Infrastructure.
-- **DTO Mappers:** Entity-to-DTO mapping (manual or AutoMapper).
+- **Services:** Business logic classes between UI and Infrastructure.  
+- **DTO Mappers:** Entity-to-DTO mapping (manual or AutoMapper).  
 
 ---
 
@@ -73,9 +78,9 @@ Jobros.sln
 > The user-facing layer.
 
 **Folders:**
-- **Controllers:** Handle requests and call services.
-- **Models:** ViewModels only (used to bind data in views).
-- **Views:** Razor pages (`.cshtml`).
+- **Controllers:** Handle requests and call services.  
+- **Models:** ViewModels only (used to bind data in views).  
+- **Views:** Razor pages (`.cshtml`).  
 - **wwwroot:** Frontend assets (CSS, JS, Bootstrap, etc.).
 
 ---
@@ -95,12 +100,12 @@ Jobros.sln
 
 ## 🧩 4. Folder Rules
 
-| Location 	 | Should Contain 		         | Must NOT Contain 	  |
-|--------------- |----------------------------------- |---------------------------|
-| Core 		 | Interfaces, Entities, Enums, DTOs  | Implementation logic 	  |
-| Infrastructure | Data, Repositories, Configurations | Views, Controllers 	  |
-| Application 	 | Services, DTO Mappers		         | EF or UI code 		  |
-| UI 		 | Controllers, Views, Models 	         | Business Logic or EF code |
+| Location | Should Contain | Must NOT Contain |
+|-----------|----------------|------------------|
+| Core | Interfaces, Entities, Enums, DTOs | Implementation logic |
+| Infrastructure | Data, Repositories, Configurations, Logging, Services | Views, Controllers |
+| Application | Services, DTO Mappers | EF or UI code |
+| UI | Controllers, Views, Models | Business Logic or EF code |
 
 ---
 
@@ -108,7 +113,7 @@ Jobros.sln
 
 - **Main Branch:** Stable, no direct pushes.  
 - **Develop Branch:** Base for new features.  
-- Each member creates their branch:  
+- Each member creates their branch:
   ```
   feature/karim-ef
   feature/sohila-repo
@@ -127,17 +132,29 @@ refactor: simplify repository pattern
 
 ## 🧩 6. Error Handling & Validation
 
-- Use `try/catch` for potential errors.
-- Services handle logging.
+- Use `try/catch` for potential errors.  
+- Services handle logging (see [Jobros_Logging_Guide.md](./Jobros_Logging_Guide.md)).  
 - Controllers must validate `ModelState` before calling services.
 
 ---
 
 ## 💬 7. Communication Rules
 
-- Any structure or naming change must be discussed first.
-- Everyone pushes work to their feature branch daily.
+- Any structure or naming change must be discussed first.  
+- Everyone pushes work to their feature branch daily.  
 - No merge to `Master` without review approval.
+
+---
+
+## 📚 8. Reference Documents
+
+| Guide | Description |
+|--------|--------------|
+| [📘 DatabaseDescription.md](./DatabaseDescription.md) | Database schema and entity relationships |
+| [📧 Jobros_Email_Service_Guide.md](./Jobros_Email_Service_Guide.md) | How to use and configure the SendGrid-based email service |
+| [🪵 Jobros_Logging_Guide.md](./Jobros_Logging_Guide.md) | Logging standards, configuration, and usage examples |
+| [📊 Jobros_Reporting_Guide.md](./Jobros_Reporting_Guide.md) | Report generation and export functionality |
+| [🧭 ProjectGuidelines.md](./ProjectGuidelines.md) | Main development and collaboration guide |
 
 ---
 
