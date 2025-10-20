@@ -34,5 +34,23 @@ namespace Infrastructure.Services
                 throw new Exception($"SendGrid failed: {response.StatusCode} - {body}");
             }
         }
+
+        public async Task<bool> PingAsync()
+        {
+            try
+            {
+                // Try a no-op API call — SendGrid requires valid API key.
+                var response = await _client.RequestAsync(
+                    method: SendGridClient.Method.GET,
+                    urlPath: "user/profile"
+                );
+
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
