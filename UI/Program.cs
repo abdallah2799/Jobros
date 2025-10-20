@@ -1,6 +1,7 @@
 ﻿using Application.DTO_Mappers;
 using Application.HealthChecks;
 using Application.Services;
+using Application.Services.Reporting;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.IServices.Commands;
@@ -8,6 +9,7 @@ using Core.Interfaces.IServices.IAuth;
 using Core.Interfaces.IServices.IEmailServices;
 using Core.Interfaces.IServices.IQueries;
 using Core.Interfaces.IUnitOfWorks;
+using Core.Interfaces.Services;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -135,6 +137,18 @@ builder.Services.AddTransient<RoleResolver>();
 
 // MVC Controllers + Views
 builder.Services.AddControllersWithViews();
+
+
+// Reporting Services
+
+// Test
+//----------------------------------
+builder.Services.AddScoped<ITestReportingService, TestReportingService>();
+//----------------------------------
+
+builder.Services.AddTransient<ExcelReportExporter>();
+builder.Services.AddTransient<PdfReportExporter>();
+builder.Services.AddTransient<ReportExportService>();
 
 // -----------------------------------------------
 // Health Checks (Database + Email)

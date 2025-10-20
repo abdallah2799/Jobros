@@ -49,6 +49,22 @@ namespace Infrastructure.Repositories
            return await db.Set<T>().ToListAsync();
         }
 
+        async Task<IEnumerable<T>> IRepository<T>.GetAllAsync(string? includeProperties)
+        {
+            IQueryable<T> query = _dbSet.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(includeProperties))
+            {
+                foreach (var includeProp in includeProperties
+                             .Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp.Trim());
+                }
+            }
+
+            return await query.ToListAsync();
+        }
+
         async Task<T?> IRepository<T>.GetByIdAsync(int id)
         {
           return await  db.Set<T>().FindAsync(id);
