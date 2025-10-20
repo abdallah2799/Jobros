@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251017012620_CreateDatabase")]
-    partial class CreateDatabase
+    [Migration("20251020002050_AddIsVerifiedToEmployer")]
+    partial class AddIsVerifiedToEmployer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -391,6 +391,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Industry")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
