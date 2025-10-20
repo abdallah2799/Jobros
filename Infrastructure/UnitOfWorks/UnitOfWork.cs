@@ -18,6 +18,7 @@ namespace Infrastructure.UnitOfWorks
         private IRepository<Job>? _jobs;
         private IRepository<Category>? _categories;
         private IRepository<Application>? _applications;
+        private IRepository<JobSeeker>? _jobseekers;
         public UnitOfWork(ApplicationDbContext db)
         {
             this.db = db;
@@ -28,6 +29,7 @@ namespace Infrastructure.UnitOfWorks
         public IRepository<Category> Categories => _categories ??= new Repository<Category>(db);
 
         public IRepository<Application> Applications => _applications ??= new Repository<Application>(db);
+        public IRepository<JobSeeker> JobSeekers => _jobseekers ??= new Repository<JobSeeker>(db);
 
         public async Task<int> CompleteAsync()
         {

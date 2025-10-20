@@ -14,6 +14,7 @@ namespace Core.Interfaces.IUnitOfWorks
         public IRepository<Job> Jobs { get; }
         public IRepository<Category> Categories { get; }
         public IRepository<Application> Applications { get; }
+        public IRepository<JobSeeker> JobSeekers { get; }
 
         /// <summary>
         /// Commit all changes in a single transaction (or save changes).
