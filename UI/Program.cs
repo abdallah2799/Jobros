@@ -120,6 +120,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Email (SendGrid)
+
 builder.Services.AddSendGrid(options =>
 {
     options.ApiKey = builder.Configuration["SendGrid:ApiKey"]?? Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
