@@ -13,7 +13,7 @@ namespace Core.Interfaces.IRepositories
     {
         Task<T?> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
-
+        Task<IEnumerable<T>> GetAllAsync(string? includeProperties);
         /// <summary>
         /// Find by predicate (translated to SQL by EF when used).
         /// </summary>
