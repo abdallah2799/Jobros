@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Infrastructure/Migrations/20251020002050_AddIsVerifiedToEmployer.cs
+/Infrastructure/Migrations/20251020002050_AddIsVerifiedToEmployer.Designer.cs
+/Infrastructure/Migrations/20251020002050_AddIsVerifiedToEmployer.cs
