@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251020002050_AddIsVerifiedToEmployer")]
+    [Migration("20251020204856_aded")]
     partial class AddIsVerifiedToEmployer
     {
         /// <inheritdoc />
