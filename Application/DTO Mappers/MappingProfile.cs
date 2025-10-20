@@ -25,6 +25,8 @@ namespace Application.DTO_Mappers
             // From ApplicationUser (or derived) to UserResponseDTO
             CreateMap<ApplicationUser, UserResponseDTO>()
                 .ForMember(dest => dest.Role, opt => opt.MapFrom<RoleResolver>()); 
+
+            
         }
     }
 }
