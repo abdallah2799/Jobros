@@ -1,6 +1,5 @@
 using Core.DTOs.Application;
 using Core.DTOs.Job;
-using Core.DTOs.JobSeeker;
 using Core.Interfaces.IServices.Commands;
 using Core.Interfaces.IServices.IQueries;
 using Microsoft.AspNetCore.Authorization;
