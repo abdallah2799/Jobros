@@ -13,6 +13,7 @@ namespace Core.Entities
         public string Website { get; set; }
         public string Location { get; set; }
         public string Description { get; set; }
+        public bool IsVerified { get; set; } = false;
 
         public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();
     }
