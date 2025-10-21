@@ -1,0 +1,87 @@
+﻿@using System.Security.Claims
+@{
+    // Get user role from claims
+    var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "User";
+}
+
+<div class="card shadow-sm p-0" style="border-radius: 20px; border: 2px solid #e9ecef; min-height: 100vh;">
+    <div class="card-header text-center"
+         style="background: linear-gradient(45deg, #00B074, #00B074); border-radius: 20px 20px 0 0; padding: 1.5rem;">
+        <i class="fas fa-user-circle rounded-circle" style="color: white; font-size: 2.5rem;"></i>
+        <h5 class="mt-2 mb-0 fw-bold text-white">@userRole Portal</h5>
+    </div>
+
+    <div class="card-body d-flex flex-column justify-content-between p-0">
+        <ul class="list-group list-group-flush">
+            @if (userRole == "Admin")
+            {
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="Admin" asp-action="Profile" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-user-edit me-3" style="font-size: 0.875rem;"></i> Edit Profile
+                    </a>
+                </li>
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="Admin" asp-action="Dashboard" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-tachometer-alt me-3" style="font-size: 0.875rem;"></i> Dashboard
+                    </a>
+                </li>
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="Admin" asp-action="Jobs" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-briefcase me-3" style="font-size: 0.875rem;"></i> Jobs Management
+                    </a>
+                </li>
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="Admin" asp-action="Settings" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-cog me-3" style="font-size: 0.875rem;"></i> Settings
+                    </a>
+                </li>
+            }
+            else if (userRole == "Employer")
+            {
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="Employer" asp-action="Profile" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-user-edit me-3" style="font-size: 0.875rem;"></i> Edit Profile
+                    </a>
+                </li>
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="Employer" asp-action="Dashboard" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-tachometer-alt me-3" style="font-size: 0.875rem;"></i> Dashboard
+                    </a>
+                </li>
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="Employer" asp-action="MyJobs" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-briefcase me-3" style="font-size: 0.875rem;"></i> My Jobs
+                    </a>
+                </li>
+            }
+            else if (userRole == "JobSeeker")
+            {
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="JobSeeker" asp-action="Profile" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-user-edit me-3" style="font-size: 0.875rem;"></i> Edit Profile
+                    </a>
+                </li>
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="JobSeeker" asp-action="BrowseJobs" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-search me-3" style="font-size: 0.875rem;"></i> Browse Jobs
+                    </a>
+                </li>
+                <li class="list-group-item border-0 py-3">
+                    <a asp-controller="JobSeeker" asp-action="MyApplications" class="d-flex align-items-center text-decoration-none text-dark">
+                        <i class="fas fa-file-alt me-3" style="font-size: 0.875rem;"></i> My Applications
+                    </a>
+                </li>
+            }
+        </ul>
+
+        <!-- Logout fixed at bottom -->
+        <ul class="list-group list-group-flush mt-auto">
+            <li class="list-group-item border-0 py-3" style="border-top: 2px solid #e9ecef !important;">
+                <a asp-controller="Auth" asp-action="Logout" class="d-flex align-items-center text-decoration-none text-danger">
+                    <i class="fas fa-sign-out-alt me-3" style="font-size: 0.875rem;"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+

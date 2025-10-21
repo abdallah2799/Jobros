@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewData["Title"] = "User Management";
+    var users = ViewBag.Users as IEnumerable<Core.DTOs.Auth.UserResponseDTO>;
+}
+
+<div class="container my-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+        <h2 class="fw-bold text-primary">👥 User Management</h2>
+
+        <a asp-action="AddUser" class="btn btn-success rounded-pill px-4 mt-2 mt-sm-0">
+            <i class="bi bi-person-plus"></i> Add User
+        </a>
+    </div>
+
+    <div class="card shadow border-0 rounded-4">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        @if (users != null && users.Any())
+                        {
+                            var index = 1;
+                            foreach (var user in users)
+                            {
+                                <tr>
+                                    <td>@index</td>
+                                    <td>@user.FullName</td>
+                                    <td>@user.Email</td>
+                                    <td>@user.Role</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm @(user.IsActive ? "btn-success" : "btn-danger") toggle-status" data-id="@user.Id">
+                                            @(user.IsActive ? "Active" : "Inactive")
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                            <button type="button" class="btn btn-sm btn-info action-btn" data-id="@user.Id" data-action="details">View</button>
+                                            <button type="button" class="btn btn-sm btn-warning action-btn" data-id="@user.Id" data-action="edit">Edit</button>
+                                            <button type="button" class="btn btn-sm btn-danger action-btn" data-id="@user.Id" data-action="delete">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-muted">No users found</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <a asp-action="Dashboard" class="btn btn-outline-primary rounded-pill px-4">
+            ← Back to Dashboard
+        </a>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+                document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const action = btn.getAttribute('data-action');
+
+                switch(action.toLowerCase()) {
+                    case 'details':
+                        window.location.href = `/Admin/UserDetails?id=${encodeURIComponent(id)}`;
+                        break;
+                    case 'edit':
+                        window.location.href = `/Admin/EditUser?id=${encodeURIComponent(id)}`;
+                        break;
+                    case 'delete':
+                        if(confirm("Are you sure you want to delete this user?")) {
+                            window.location.href = `/Admin/DeleteUser?id=${encodeURIComponent(id)}`;
+                        }
+                        break;
+                }
+            });
+        });
+
+        document.querySelectorAll('.toggle-status').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation(); 
+                const id = btn.getAttribute('data-id');
+                const response = await fetch(`/Admin/ToggleUserStatus?id=${encodeURIComponent(id)}`, {
+                    method: 'POST'
+                });
+                if(response.ok) location.reload();
+                else alert("❌ Failed to update user status.");
+            });
+        });
+
+
+    </script>
+}

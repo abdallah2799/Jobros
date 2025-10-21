@@ -8,6 +8,7 @@ public partial class Application
     public int Id { get; set; }
     public int JobId { get; set; }
     public int JobSeekerId { get; set; }
+   
     public string Status { get; set; } = "Pending";
     public DateTime AppliedAt { get; set; } = DateTime.Now;
     public string CoverLetter { get; set; }

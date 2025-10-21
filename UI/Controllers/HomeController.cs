@@ -6,11 +6,27 @@ namespace UI.Controllers
 {
     public class HomeController : Controller
     {
-
         public IActionResult Index()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("SplashPage");
+            }
+
             return View();
         }
+
+        public IActionResult SplashPage()
+        {
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
         public IActionResult About()
         {
             return View();
@@ -35,6 +51,7 @@ namespace UI.Controllers
             return View();
         }
 
+        
 
 
     }

@@ -1,0 +1,46 @@
+﻿@model Core.DTOs.Auth.UserResponseDTO
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow" style="width: 400px; border-radius: 25px; border: 2px solid #ccc;">
+
+        <!-- Card Header -->
+        <div class="card-header d-flex align-items-center justify-content-center"
+             style="background: linear-gradient(45deg, #00B074, #00B074); border-radius: 25px 25px 0 0; padding: 1rem 2rem;">
+            <i class="fas fa-user fa-lg me-2" style="color: black; font-size: 1.2rem;"></i>
+            <h4 class="mb-0 fw-bold" style="color: black; font-size: 1.5rem;">User Details</h4>
+        </div>
+
+        <!-- Form Body -->
+        <div class="card-body p-4" style="color: black;">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Full Name</label>
+                <input type="text" class="form-control" value="@Model.FullName" readonly />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Email</label>
+                <input type="email" class="form-control" value="@Model.Email" readonly />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Role</label>
+                <input type="text" class="form-control" value="@Model.Role" readonly />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Status</label>
+                <input type="text" class="form-control" value="@(Model.IsActive ? "Active" : "Inactive")" readonly />
+            </div>
+
+            <div class="d-grid mt-3">
+                <a asp-action="UserManagement" asp-controller="Admin" class="btn btn-primary btn-lg rounded-3">
+                    ← Back to Users
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

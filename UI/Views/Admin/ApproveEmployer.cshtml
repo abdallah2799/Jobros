@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Core.DTOs.Employer.EmployerDto>
+@{
+    ViewData["Title"] = "New Employers Approval";
+}
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">Newly Registered Employers</h1>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>Company Name</th>
+                        <th>Email</th>
+                        <th>Registration Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employer in Model)
+                    {
+                        <tr>
+                            <td>@employer.CompanyName</td>
+                            <td>@employer.Email</td>
+                            <td>@employer.RegistrationDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <form asp-controller="Admin" asp-action="ApproveEmployer" asp-route-id="@employer.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-success btn-sm me-1">Approve</button>
+                                </form>
+                                <form asp-controller="Admin" asp-action="RejectEmployer" asp-route-id="@employer.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            No new employers to review.
+        </div>
+    }
+</div>

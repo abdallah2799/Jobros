@@ -6,6 +6,64 @@
     --dark: #2B3940;
 }
 
+
+.list-group-item a {
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.list-group-item a:hover {
+    transform: translateX(5px);
+    color: #00B074 !important;
+}
+
+    .list-group-item a:hover i {
+        color: #00B074 !important;
+    }
+
+table-no-hover tbody tr:hover {
+    background-color: transparent !important;
+}
+
+
+.action-icon i {
+    font-size: 0.9rem;
+}
+
+.action-btn {
+    pointer-events: auto;
+}
+
+
+tbody tr:hover {
+    background-color: inherit; 
+}
+
+
+tbody tr:hover {
+    background-color: inherit; 
+}
+
+
+.action-btn:hover,
+.toggle-status:hover {
+    opacity: 0.85;
+    transform: scale(1.05);
+    transition: all 0.15s ease-in-out;
+}
+
+
+.action-btn,
+.toggle-status {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+
+.action-icon {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
 .form-input {
     border-radius: 15px;
     border: 2px solid #ccc;
@@ -154,6 +212,7 @@
         box-shadow: 0 0 45px rgba(0, 0, 0, .08);
     }
 
+ 
 .testimonial-item {
     min-height: 220px;
     display: flex;

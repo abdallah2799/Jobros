@@ -1,0 +1,81 @@
+﻿@model Core.DTOs.Job.JobDto
+@{
+    ViewData["Title"] = "Edit Job";
+}
+<div class="container my-5">
+    <div class="card p-4 shadow-sm" style="border-radius: 20px; border: 2px solid #e9ecef; max-width: 700px; margin: 0 auto;">
+        <h3 class="text-center fw-bold text-primary mb-4">✏️ Edit Job</h3>
+        <form asp-controller="Admin" asp-action="EditJob" method="post">
+            <!-- Hidden field to maintain job ID during update -->
+            <input type="hidden" asp-for="Id" />
+
+            <!-- Job Title Input -->
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label fw-bold text-dark">Job Title</label>
+                <input asp-for="Title" class="form-control" placeholder="Enter job title" required />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+
+            <!-- Employer Name Input -->
+            <div class="mb-3">
+                <label asp-for="EmployerName" class="form-label fw-bold text-dark">Employer Name</label>
+                <input asp-for="EmployerName" class="form-control" placeholder="Enter employer name" required />
+                <span asp-validation-for="EmployerName" class="text-danger small"></span>
+            </div>
+
+            <!-- Job Description Textarea -->
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold text-dark">Job Description</label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter job description" required></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            <!-- Job Requirements Textarea -->
+            <div class="mb-3">
+                <label asp-for="Requirements" class="form-label fw-bold text-dark">Requirements</label>
+                <textarea asp-for="Requirements" class="form-control" rows="3" placeholder="Enter job requirements" required></textarea>
+                <span asp-validation-for="Requirements" class="text-danger small"></span>
+            </div>
+
+            <!-- Location Input -->
+            <div class="mb-3">
+                <label asp-for="Location" class="form-label fw-bold text-dark">Location</label>
+                <input asp-for="Location" class="form-control" placeholder="Enter job location" required />
+                <span asp-validation-for="Location" class="text-danger small"></span>
+            </div>
+
+            <!-- Salary Range Input -->
+            <div class="mb-3">
+                <label asp-for="SalaryRange" class="form-label fw-bold text-dark">Salary Range</label>
+                <input asp-for="SalaryRange" class="form-control" placeholder="e.g., 5000-10000 EGP" required />
+                <span asp-validation-for="SalaryRange" class="text-danger small"></span>
+            </div>
+
+            <!-- Job Type Input -->
+            <div class="mb-3">
+                <label asp-for="JobType" class="form-label fw-bold text-dark">Job Type</label>
+                <input asp-for="JobType" class="form-control" placeholder="e.g., Full-time, Part-time" required />
+                <span asp-validation-for="JobType" class="text-danger small"></span>
+            </div>
+
+            <!-- Active Status Dropdown -->
+            <div class="mb-4">
+                <label asp-for="IsActive" class="form-label fw-bold text-dark">Status</label>
+                <select asp-for="IsActive" class="form-select">
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+            </div>
+
+            <!-- Form Action Buttons -->
+            <div class="d-flex justify-content-between gap-2">
+                <button type="submit" class="btn btn-success flex-fill">Update Job</button>
+                <a asp-controller="Admin" asp-action="Jobs" class="btn btn-secondary flex-fill">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

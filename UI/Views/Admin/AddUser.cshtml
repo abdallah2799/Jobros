@@ -1,0 +1,103 @@
+﻿@using Core.DTOs.Admin
+@model Core.DTOs.Auth.UserResponseDTO
+
+@{
+    ViewData["Title"] = "Add User";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow" style="width: 400px; border-radius: 25px; border: 2px solid #ccc;">
+
+        <!-- Card Header -->
+        <div class="card-header d-flex align-items-center justify-content-center"
+             style="background: linear-gradient(45deg, #00B074, #00B074); border-radius: 25px 25px 0 0; padding: 1rem 2rem;">
+            <i class="fas fa-user-plus fa-lg me-2" style="color: black; font-size: 1.2rem;"></i>
+            <h4 class="mb-0 fw-bold" style="color: black; font-size: 1.5rem;">Add User</h4>
+        </div>
+
+        <!-- Form Body -->
+        <div class="card-body p-4" style="color: black;">
+            <form id="addUserForm">
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label for="FullName" class="form-label fw-semibold">Full Name</label>
+                    <input type="text" class="form-control form-input" id="FullName" placeholder="Enter full name" required>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="Email" class="form-label fw-semibold">Email</label>
+                    <input type="email" class="form-control form-input" id="Email" placeholder="Enter email" required>
+                </div>
+
+                <!-- Role -->
+                <div class="mb-3">
+                    <label for="Role" class="form-label fw-semibold">Role</label>
+                    <select class="form-select" id="Role" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="Job Seeker">Job Seeker</option>
+                        <option value="Employer">Employer</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+
+                <!-- Status -->
+                <div class="mb-3">
+                    <label for="IsActive" class="form-label fw-semibold">Status</label>
+                    <select asp-for="IsActive" class="form-select">
+                        <option value="true" selected="@(Model.IsActive ? "selected" : "")">Active</option>
+                        <option value="false" selected="@(!Model.IsActive ? "selected" : "")">Inactive</option>
+                    </select>
+                </div>
+
+
+                <!-- Buttons -->
+                <div class="d-grid gap-2 mt-3">
+                    <button type="submit"
+                            class="btn btn-lg rounded-pill"
+                            style="font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+                            background: linear-gradient(45deg, #00B074, #00B074);
+                            border: 2px solid #00B074;
+                            color: white;">
+                        💾 Save
+                    </button>
+
+                    <a asp-action="UserManagement"
+                       class="btn btn-lg rounded-pill"
+                       style="font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+                       background: linear-gradient(45deg, #0066cc, #0066cc);  
+                       border: 2px solid #0066cc;
+                       color: white;">
+                        ← Back to User Management
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('addUserForm').addEventListener('submit', function(e) {
+           
+            if (!this.checkValidity()) {
+                this.reportValidity();
+                e.preventDefault();
+                return;
+            }
+
+            e.preventDefault();
+
+            const fullName = document.getElementById('FullName').value;
+            const email = document.getElementById('Email').value;
+            const role = document.getElementById('Role').value;
+            const isActive = document.getElementById('IsActive').checked;
+
+            alert(`User Saved!\n\nFull Name: ${fullName}\nEmail: ${email}\nRole: ${role}\nActive: ${isActive}`);
+
+            // Redirect to UserManagement
+            window.location.href = '/Admin/UserManagement';
+        });
+    </script>
+}

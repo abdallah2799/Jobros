@@ -1,51 +1,82 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
-<nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-    <!-- Logo -->
-    <a asp-controller="Home" asp-action="Index" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
+﻿<nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
+
+    <!--------------------  Logo -------------------->
+    <a asp-controller="Home" asp-action="SplashPage" class="navbar-brand d-flex align-items-center text-center py-0 px-4 px-lg-5">
         <h1 class="m-0 text-primary">Jobros</h1>
     </a>
 
-
-    <!-- Toggle for mobile -->
+    <!-------------------- Mobile Toggle -------------------->
     <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarCollapse">
-        <!-- Links -->
+
+        <!-------------------- Public Links -------------------->
         <div class="navbar-nav ms-auto p-4 p-lg-0">
             <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-
-            <a class="nav-link" asp-controller="Profile" asp-action="Profile">Profile</a>
-
-
             <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
-
-
             <a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a>
+            @if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                <a class="nav-link" asp-controller="Admin" asp-action="Jobs">Jobs</a>
+            }
 
-             @* <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
-
-            <a class="nav-link" asp-controller="Home" asp-action="Terms_of_Services">Terms_of_Services</a> *@
         </div>
 
-       
-
-        <!-- Account Dropdown -->
-        <div class="nav-item dropdown me-4 ms-3">
-            <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
-                <i class="fa fa-user me-2"></i> Account
-            </a>
-            <div class="dropdown-menu dropdown-menu-end rounded-0 m-0">
-                <a href="/Auth/Login" class="dropdown-item">Login</a>
-                <a href="/Auth/Register" class="dropdown-item">Register</a>
+        @* Account section changes depending on login status *@
+        @if (User?.Identity?.IsAuthenticated ?? false)
+        {
+            <!-------------------- User is logged in -------------------->
+            <!-- Show role-based links and user dropdown -->
+            <div class="navbar-nav align-items-center">
+                @if (User.IsInRole("Admin"))
+                {
+                    <a class="nav-link me-3" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a>
+                }
+                else if (User.IsInRole("Employer"))
+                {
+                    <a class="nav-link me-3" asp-controller="Employer" asp-action="MyJobs">My Jobs</a>
+                }
+                else if (User.IsInRole("JobSeeker"))
+                {
+                    <a class="nav-link me-3" asp-controller="JobSeeker" asp-action="BrowseJobs">Browse Jobs</a>
+                }
             </div>
-        </div>
+
+            <!-------------------- User Dropdown -------------------->
+            <!-- Shows user name, profile link and logout button -->
+            <div class="nav-item dropdown me-4 ms-3">
+                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-user me-2"></i> @User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value
+                </a>
+                <div class="dropdown-menu dropdown-menu-end rounded-0 m-0">
+                    <!-- Profile link -->
+                    <a asp-controller="Admin" asp-action="Profile" class="dropdown-item">Profile</a>
+
+                    <!-- Logout form -->
+                    <form asp-controller="Auth" asp-action="Logout" method="post" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="dropdown-item text-danger">Logout</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-------------------- User is NOT logged in -------------------->
+            <!-- Show account dropdown with login and register -->
+            <div class="nav-item dropdown me-4 ms-3">
+                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-user me-2"></i> Account
+                </a>
+                <div class="dropdown-menu dropdown-menu-end rounded-0 m-0">
+                    <!-- Login -->
+                    <a asp-controller="Auth" asp-action="Login" class="dropdown-item">Login</a>
+                    <!-- Register -->
+                    <a asp-controller="Auth" asp-action="Register" class="dropdown-item">Register</a>
+                </div>
+            </div>
+        }
     </div>
 </nav>

@@ -1,0 +1,11 @@
+﻿<tr>
+    <td>@Model.Title</td>
+    <td>@Model.EmployerName</td>
+    <td>@(Model.IsActive ? "Active" : "Inactive")</td>
+    <td>@Model.CreatedAt.ToString("dd/MM/yyyy")</td>
+    <td>
+        <a asp-controller="Admin" asp-action="ViewJob" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">View</a>
+        <a asp-controller="Admin" asp-action="DeleteJob" asp-route-id="@Model.Id" class="btn btn-sm btn-danger"
+           onclick="return confirm('Are you sure?')">Delete</a>
+    </td>
+</tr>

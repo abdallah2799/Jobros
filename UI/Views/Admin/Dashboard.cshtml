@@ -1,0 +1,105 @@
+﻿@using Core.DTOs.Admin
+@model DashboardStatsDTO
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container my-5">
+
+    <h2 class="mb-5 text-center text-primary fw-bold">
+        📊 Admin Dashboard
+    </h2>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card text-center shadow border-0 bg-primary text-white rounded-4">
+                <div class="card-body py-4">
+                    <h6>Total Users</h6>
+                    <h2>@Model.TotalUsers</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow border-0 bg-success text-white rounded-4">
+                <div class="card-body py-4">
+                    <h6>Employers</h6>
+                    <h2>@Model.TotalEmployers</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow border-0 bg-info text-white rounded-4">
+                <div class="card-body py-4">
+                    <h6>Job Seekers</h6>
+                    <h2>@Model.TotalJobSeekers</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow border-0 bg-warning text-white rounded-4">
+                <div class="card-body py-4">
+                    <h6>Active Jobs</h6>
+                    <h2>@Model.ActiveJobs</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row gy-4">
+        <!-- Jobs per Category Chart -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 p-4 rounded-4">
+                <h5 class="text-center mb-3 text-primary fw-bold">📈 Jobs per Category</h5>
+                <canvas id="jobsChart" style="width:100%; height:590px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Users per Role Chart -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 p-4 rounded-4">
+                <h5 class="text-center mb-3 text-primary fw-bold">👥 Users per Role</h5>
+                <canvas id="usersChart" style="width:100%; height:300px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const jobsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.JobsPerCategory));
+        const usersData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.UsersPerRole));
+
+        new Chart(document.getElementById('jobsChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(jobsData),
+                datasets: [{
+                    label: 'Jobs per Category',
+                    data: Object.values(jobsData),
+                    backgroundColor: '#007bff'
+                }]
+            },
+            options: { plugins: { legend: { display: false } } }
+        });
+
+        new Chart(document.getElementById('usersChart'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(usersData),
+                datasets: [{
+                    label: 'Users per Role',
+                    data: Object.values(usersData),
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                }]
+            },
+            options: { plugins: { legend: { position: 'bottom' } } }
+        });
+    </script>
+}

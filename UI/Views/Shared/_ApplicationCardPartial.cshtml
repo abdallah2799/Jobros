@@ -1,0 +1,11 @@
+﻿<tr>
+    <td>@Model.JobTitle</td>
+    <td>@Model.JobSeekerName</td>
+    <td>@Model.Status</td>
+    <td>@Model.AppliedAt.ToString("dd/MM/yyyy")</td>
+    <td>
+        <a asp-controller="Admin" asp-action="ViewApplication" asp-route-id="@Model.Id" class="btn btn-sm btn-primary">View</a>
+        <a asp-controller="Admin" asp-action="DeleteApplication" asp-route-id="@Model.Id" class="btn btn-sm btn-danger"
+           onclick="return confirm('Are you sure?')">Delete</a>
+    </td>
+</tr>

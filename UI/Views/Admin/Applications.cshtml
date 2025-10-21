@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Core.DTOs.Application.ApplicationDto>
+
+@{
+    ViewData["Title"] = "Applications";
+}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Job Applications</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Job</th>
+                    <th>Employer</th>
+                    <th>Job Seeker</th>
+                    <th>Status</th>
+                    <th>Date Applied</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var app in Model)
+                {
+                    <tr>
+                        <td>@app.JobTitle</td>
+                        <td>@app.EmployerName</td>
+                        <td>@app.JobSeekerName</td>
+                        <td>
+                            @if (app.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark">@app.Status</span>
+                            }
+                            else if (app.Status == "Accepted")
+                            {
+                                <span class="badge bg-success">@app.Status</span>
+                            }
+                            else if (app.Status == "Rejected")
+                            {
+                                <span class="badge bg-danger">@app.Status</span>
+                            }
+                        </td>
+                        <td>@app.AppliedAt.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

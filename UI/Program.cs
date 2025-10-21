@@ -5,6 +5,7 @@ using Application.Services.Reporting;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.IServices.Commands;
+using Core.Interfaces.IServices.IAdmin;
 using Core.Interfaces.IServices.IAuth;
 using Core.Interfaces.IServices.IEmailServices;
 using Core.Interfaces.IServices.IQueries;
@@ -119,6 +120,9 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Auth Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Admin Service
+builder.Services.AddScoped<IAdminService, AdminService>();
+
 // Email (SendGrid)
 builder.Services.AddSendGrid(options =>
 {
@@ -138,6 +142,16 @@ builder.Services.AddTransient<RoleResolver>();
 // MVC Controllers + Views
 builder.Services.AddControllersWithViews();
 
+// Memory cache needed for Session
+builder.Services.AddDistributedMemoryCache();
+
+// Configure Session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); 
+    options.Cookie.HttpOnly = true;                   
+    options.Cookie.IsEssential = true;               
+});
 
 // Reporting Services
 
@@ -227,6 +241,8 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -236,7 +252,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=SplashPage}/{id?}");
 
 // Health Check Endpoint (visible in /health)
 app.MapHealthChecks("/health", new HealthCheckOptions
