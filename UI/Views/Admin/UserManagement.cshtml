@@ -1,0 +1,86 @@
+@model UI.Models.Admin.UserManagementViewModel
+
+@{
+    ViewData["Title"] = "TEST - User Management";
+    Layout = "_Layout"; // Use your main layout to get styles and scripts
+}
+
+<h1>TEST PAGE - User Management</h1>
+<hr />
+
+<!-- Display Success/Error Messages from TempData -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+
+<!-- Section 1: Test the GetUnverifiedEmployersAsync Service Call -->
+<h2>Pending Employer Approvals</h2>
+@if (!Model.UnverifiedEmployers.Any())
+{
+    <p class="text-success">No pending approvals. This is working!</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr><th>Full Name</th><th>Company</th><th>Email</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.UnverifiedEmployers)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>@user.CompanyName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        <!-- TEST THE POST ACTION FOR APPROVE -->
+                        <form asp-action="ApproveEmployer" asp-route-id="@user.Id" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                        </form>
+                        
+                        <!-- TEST THE POST ACTION FOR REJECT -->
+                        <form asp-action="RejectEmployer" asp-route-id="@user.Id" method="post" style="display:inline;">
+                             @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+
+<!-- Section 2: Test the GetAllUsersAsync Service Call -->
+<h2>All Registered Users</h2>
+@if (!Model.AllUsers.Any())
+{
+    <p>No users found.</p>
+}
+else
+{
+    <table class="table">
+         <thead>
+            <tr><th>Full Name</th><th>Email</th><th>Role</th><th>Active?</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.AllUsers)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Role</td>
+                    <td>@user.IsActive</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
