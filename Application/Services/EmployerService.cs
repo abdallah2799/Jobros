@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
+using Core.DTOs.EmployerDTOs;
 using Core.DTOs.Job;
+using Core.Entities;
 using Core.Interfaces.IServices.IEmployer;
 using Core.Interfaces.IUnitOfWorks;
+using Infrastructure.UnitOfWorks;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +14,16 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class EmployerService : IJobService
+    public class EmployerService : IJobService,IProfileService
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-        public EmployerService(IUnitOfWork uow, IMapper mapper)
+        private readonly IPasswordHasher<Employer> _hasher;
+        public EmployerService(IUnitOfWork uow, IMapper mapper, IMapper _mapper,IPasswordHasher<Employer> hasher)
         {
             _uow = uow;
             _mapper = mapper;
+            _hasher = hasher;
         }
       async  Task<bool> IJobService.ActivateJobAsync(int jobId, int employerId)
         {
@@ -122,7 +128,8 @@ namespace Application.Services
                     Console.WriteLine($"Job with Id {jobId} not found for Employer {employerId}.");
                     return false;
                 }
-                _uow.Jobs.Update(job);
+               ;
+                _uow.Jobs.Update(_mapper.Map(model, job));
 
                 var result = await _uow.CompleteAsync();
 
@@ -227,5 +234,83 @@ namespace Application.Services
             return job != null;
         }
 
+        async Task<EmployerProfileDto?> IProfileService.GetProfileAsync(int employerId)
+        {     var employer = await _uow.Employers.GetByIdAsync(employerId);
+            if (employer == null)
+            {
+                Console.WriteLine($"Employer with Id {employerId} not found.");
+                return null;
+            }
+            var profileDto = _mapper.Map<EmployerProfileDto>(employer);
+            return profileDto;
+        }
+
+        async Task<bool> IProfileService.UpdateProfileAsync(int employerId, EditEmployerProfileDto model)
+        {
+
+            try
+            {
+                var prof =  (await _uow.Employers.FindAsync(employerId => employerId == employerId)).FirstOrDefault();
+             if(prof == null)
+            {
+
+                Console.WriteLine($"Employer {employerId} is not found");
+                return false;
+            }
+             _uow.Employers.Update( _mapper.Map(model,prof));
+            var result = await _uow.CompleteAsync();
+            Console.WriteLine(result > 0
+                  ? $"Job {employerId} deactivated successfully."
+                  : $"Failed to deactivate job {employerId}.");
+
+            return result > 0;
+        }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Error deactivating job {employerId}: {ex.Message}");
+                throw;
+            }
+
+
+
+}
+
+        async Task<bool> IProfileService.ChangePasswordAsync(int employerId, string currentPassword, string newPassword)
+        {
+            try
+            {
+                var emp = await _uow.Employers.GetByIdAsync(employerId);
+                if (emp == null)
+                    return (false);
+
+                var verification = _hasher.VerifyHashedPassword(emp, emp.PasswordHash, currentPassword);
+                if (verification == PasswordVerificationResult.Failed)
+                    return false;
+
+                emp.PasswordHash = _hasher.HashPassword(emp, newPassword);
+                _uow.Employers.Update(emp);
+
+                var result = await _uow.CompleteAsync();
+
+                if (result > 0)
+               
+                    return true;
+                
+                else
+                
+                    return false;
+                
+            }
+            catch (Exception ex)
+            {
+               
+                Console.WriteLine($"Error while changing password: {ex.Message}");
+
+                return false;
+            }
+        }
+
+       
     }
 }

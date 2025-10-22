@@ -19,17 +19,20 @@ namespace Infrastructure.UnitOfWorks
         private IRepository<Category>? _categories;
         private IRepository<Application>? _applications;
         private IRepository<JobSeeker>? _jobseekers;
+        private IRepository<Employer>? _employers;
         public UnitOfWork(ApplicationDbContext db)
         {
             this.db = db;
         }
-
+        public IRepository<Employer> Employers => _employers ??= new Repository<Employer>(db);
         public IRepository<Job> Jobs => _jobs ??= new Repository<Job>(db);
 
         public IRepository<Category> Categories => _categories ??= new Repository<Category>(db);
 
         public IRepository<Application> Applications => _applications ??= new Repository<Application>(db);
         public IRepository<JobSeeker> JobSeekers => _jobseekers ??= new Repository<JobSeeker>(db);
+
+     
 
         public async Task<int> CompleteAsync()
         {
