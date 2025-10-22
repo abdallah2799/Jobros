@@ -13,23 +13,7 @@ namespace Core.DTOs.Admin
         public int TotalJobSeekers { get; set; }
         public int ActiveJobs { get; set; }
         public int TotalApplications { get; set; }
-
-        public Dictionary<string, int> JobsPerCategory { get; set; } = new Dictionary<string, int>();
-
-
-        public Dictionary<string, int> UsersPerRole { get; set; } = new Dictionary<string, int>();
-    }
-
-    public class CategoryStatsDTO
-    {
-        public string CategoryName { get; set; }
-        public int JobCount { get; set; }
-    }
-
-    public class RoleStatsDTO
-    {
-        public string RoleName { get; set; }
-        public int Count { get; set; }
+        public int PendingApprovals { get; set; }
     }
 }
 

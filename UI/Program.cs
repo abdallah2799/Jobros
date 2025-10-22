@@ -135,6 +135,9 @@ builder.Services.AddScoped<IEmailService, SendGridEmailService>();
 builder.Services.AddScoped<IJobSeekerQueryService, JobSeekerService>();
 builder.Services.AddScoped<IJobSeekerCommandService, JobSeekerService>();
 
+// Admin Services
+builder.Services.AddScoped<IAdminService, AdminService>();
+
 // AutoMapper Configuration
 builder.Services.AddAutoMapper(op => op.AddProfile(typeof(MappingProfile)));
 builder.Services.AddTransient<RoleResolver>();

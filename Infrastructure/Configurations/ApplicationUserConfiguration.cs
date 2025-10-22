@@ -10,7 +10,7 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
-        builder.ToTable("AspNetUsers"); // Identity default table
+        builder.ToTable("Users"); // Identity default table
 
         builder.HasDiscriminator<string>("Role")
             .HasValue<Admin>("Admin")
