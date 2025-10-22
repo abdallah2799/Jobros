@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Core.DTOs.Admin;
 using Core.DTOs.Auth;
 using Core.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -36,6 +37,16 @@ namespace Application.DTO_Mappers
 
             // JobSeeker -> JobSeekerDto
             CreateMap<Core.Entities.JobSeeker, Core.DTOs.JobSeeker.JobSeekerDto>();
+
+            CreateMap<Job, JobAdminViewDTO>()
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Employer.CompanyName));
+
+            CreateMap<Core.Entities.Application, ApplicationAdminViewDTO>()
+                .ForMember(dest => dest.JobTitle, opt => opt.MapFrom(src => src.Job.Title))
+                .ForMember(dest => dest.ApplicantName, opt => opt.MapFrom(src => src.JobSeeker.FullName))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Job.Employer.CompanyName));
+
+            CreateMap<Employer, EmployerDropdownDTO>();
         }
     }
 }

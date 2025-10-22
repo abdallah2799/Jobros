@@ -5,6 +5,7 @@ using Application.Services.Reporting;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.IServices.Commands;
+using Core.Interfaces.IServices.IAdmin;
 using Core.Interfaces.IServices.IAuth;
 using Core.Interfaces.IServices.IEmailServices;
 using Core.Interfaces.IServices.IQueries;
@@ -130,6 +131,9 @@ builder.Services.AddScoped<IEmailService, SendGridEmailService>();
 // JobSeeker Services
 builder.Services.AddScoped<IJobSeekerQueryService, JobSeekerService>();
 builder.Services.AddScoped<IJobSeekerCommandService, JobSeekerService>();
+
+// Admin Services
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 // AutoMapper Configuration
 builder.Services.AddAutoMapper(op => op.AddProfile(typeof(MappingProfile)));
