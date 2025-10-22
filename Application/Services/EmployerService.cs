@@ -2,6 +2,7 @@
 using Core.DTOs.EmployerDTOs;
 using Core.DTOs.Job;
 using Core.Entities;
+using Core.Interfaces.IServices.IEmailServices;
 using Core.Interfaces.IServices.IEmployer;
 using Core.Interfaces.IUnitOfWorks;
 using Infrastructure.UnitOfWorks;
@@ -14,18 +15,21 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class EmployerService : IJobService,IProfileService
+    public class EmployerService : IJobService,IProfileService , IApplicationsServices
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<Employer> _hasher;
-        public EmployerService(IUnitOfWork uow, IMapper mapper, IMapper _mapper,IPasswordHasher<Employer> hasher)
+        private readonly IEmailService _emailService;
+        public EmployerService(IUnitOfWork uow, IMapper mapper, IMapper _mapper,IPasswordHasher<Employer> hasher, IEmailService emailService)
         {
             _uow = uow;
             _mapper = mapper;
             _hasher = hasher;
+            _emailService = emailService;
         }
-      async  Task<bool> IJobService.ActivateJobAsync(int jobId, int employerId)
+        // implement IJobService methods
+        async Task<bool> IJobService.ActivateJobAsync(int jobId, int employerId)
         {
             try
             {
@@ -233,6 +237,7 @@ namespace Application.Services
 
             return job != null;
         }
+        // implement IProfileService methods
 
         async Task<EmployerProfileDto?> IProfileService.GetProfileAsync(int employerId)
         {     var employer = await _uow.Employers.GetByIdAsync(employerId);
@@ -276,41 +281,138 @@ namespace Application.Services
 
 }
 
-        async Task<bool> IProfileService.ChangePasswordAsync(int employerId, string currentPassword, string newPassword)
+        async Task<bool> IProfileService.ChangePasswordAsync(int employerId, ChangePasswordDto model)
         {
             try
             {
                 var emp = await _uow.Employers.GetByIdAsync(employerId);
                 if (emp == null)
-                    return (false);
+                    return false;
 
-                var verification = _hasher.VerifyHashedPassword(emp, emp.PasswordHash, currentPassword);
+                // Verify current password
+                var verification = _hasher.VerifyHashedPassword(emp, emp.PasswordHash, model.CurrentPassword);
                 if (verification == PasswordVerificationResult.Failed)
                     return false;
 
-                emp.PasswordHash = _hasher.HashPassword(emp, newPassword);
+                // Set new password
+                emp.PasswordHash = _hasher.HashPassword(emp, model.NewPassword);
                 _uow.Employers.Update(emp);
 
+                // Save changes
                 var result = await _uow.CompleteAsync();
-
-                if (result > 0)
-               
-                    return true;
-                
-                else
-                
-                    return false;
-                
+                return result > 0;
             }
             catch (Exception ex)
             {
-               
                 Console.WriteLine($"Error while changing password: {ex.Message}");
-
                 return false;
             }
         }
 
-       
+        // implement IApplicationsServices methods
+        async Task<IEnumerable<ApplicationsDTo>> IApplicationsServices.GetApplicationsByEmployerAsync(int employerId, string? jobTitle = null, string? applicantName= null)
+        {
+            try
+            {
+                var applications = await _uow.Applications.FindAsync(a =>
+                    a.Job.EmployerId == employerId &&
+                    (string.IsNullOrEmpty(jobTitle) || a.Job.Title.Contains(jobTitle)) &&
+                    (string.IsNullOrEmpty(applicantName) || a.JobSeeker.FullName.Contains(applicantName))
+                );
+
+                var applicationDtos = applications.Select(a => _mapper.Map<ApplicationsDTo>(a));
+                return applicationDtos;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching applications for employer {employerId}: {ex.Message}");
+                throw;
+            }
+        }
+
+        async Task<ApplicationDetailsDto?> IApplicationsServices.GetApplicationDetailsAsync(int applicationId, int employerId)
+        {
+          var app =  await _uow.Applications.GetByIdAsync(applicationId);
+            if(app == null || app.Job.EmployerId != employerId)
+            {
+                Console.WriteLine($"Application {applicationId} not found for Employer {employerId}");
+                return null;
+            }
+            var appDetails = _mapper.Map<ApplicationDetailsDto>(app);
+            return appDetails;
+
+        }
+
+        async Task<bool> IApplicationsServices.AcceptApplicationAsync(int applicationId, int employerId)
+        {
+            return await UpdateApplicationStatusAndNotifyAsync(
+                applicationId,
+                employerId,
+                "Accepted",
+                (app) => $"Dear {app.JobSeeker.FullName},\n\nYou have been shortlisted for an interview for the position {app.Job.Title}."
+            );
+        }
+
+        async Task<bool> IApplicationsServices.RejectApplicationAsync(int applicationId, int employerId)
+        {
+            return await UpdateApplicationStatusAndNotifyAsync(
+                applicationId,
+                employerId,
+                "Rejected",
+                (app) => $"Dear {app.JobSeeker.FullName},\n\nThank you for applying for {app.Job.Title}. We regret to inform you that your application was not selected."
+            );
+        }
+
+        // Private helper method
+        private async Task<bool> UpdateApplicationStatusAndNotifyAsync(
+            int applicationId,
+            int employerId,
+            string status,
+            Func<Core.Entities.Application, string> emailBodyFunc 
+        )
+        {
+            try
+            {
+                var app = await _uow.Applications.GetByIdAsync(applicationId);
+                if (app == null || app.Job.EmployerId != employerId)
+                {
+                    Console.WriteLine($"Application {applicationId} not found for Employer {employerId}");
+                    return false;
+                }
+
+                app.Status = status;
+                _uow.Applications.Update(app);
+
+                var result = await _uow.CompleteAsync();
+
+                if (result > 0)
+                {
+                    try
+                    {
+                        await _emailService.SendEmailAsync(
+                            app.JobSeeker.Email,
+                            status == "Accepted" ? "Interview Invitation" : "Application Status Update",
+                            emailBodyFunc(app) // <-- This now matches the type
+                        );
+                    }
+                    catch (Exception emailEx)
+                    {
+                        // Log email failure but do not fail the method
+                        Console.WriteLine($"Failed to send email to {app.JobSeeker.Email}: {emailEx.Message}");
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                // Log any other exception
+                Console.WriteLine($"Error updating application {applicationId} for Employer {employerId}: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

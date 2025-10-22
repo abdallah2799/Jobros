@@ -11,7 +11,6 @@ namespace Core.Interfaces.IServices.IEmployer
     {
         Task<EmployerProfileDto?> GetProfileAsync(int employerId);
         Task<bool> UpdateProfileAsync(int employerId, EditEmployerProfileDto model);
-        Task<bool> ChangePasswordAsync(int employerId, string currentPassword, string newPassword);
         Task<bool> ChangePasswordAsync(int employerId, ChangePasswordDto model);
     }
 }

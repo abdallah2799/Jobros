@@ -11,10 +11,13 @@ namespace UI.Controllers
     {
         private readonly IJobService _jobService;
         private readonly IProfileService _profileService;
-        public EmployerController(IJobService jobService, IProfileService profileService)
+        private readonly IApplicationsServices _applicationsServices;
+        public EmployerController(IJobService jobService, IProfileService profileService, IApplicationsServices applicationsServices
+            )
         {
             _jobService = jobService;
             _profileService = profileService;
+            _applicationsServices = applicationsServices;
         }
 
         // Employer profile management
@@ -167,6 +170,36 @@ namespace UI.Controllers
 
 
         // View applicants for a specific job
+        public async Task<IActionResult> Applications(int employerId, string? jobTitle, string? applicantName)
+        {
+            var applications = await _applicationsServices.GetApplicationsByEmployerAsync(employerId, jobTitle, applicantName);
+            ViewBag.EmployerId = employerId;
+            return View(applications);
+        }
+        public async Task<IActionResult> ApplicationDetails(int applicationId, int employerId)
+        {
+            var application = await _applicationsServices.GetApplicationDetailsAsync(applicationId, employerId);
+            if (application == null)
+                return NotFound();
+            return View(application);
+        }
+        public async Task<IActionResult> AcceptApplication(int applicationId, int employerId)
+        {
+            var result = await _applicationsServices.AcceptApplicationAsync(applicationId, employerId);
+            if (!result)
+                return NotFound();
+            return RedirectToAction(nameof(Applications), new { employerId });
+        }
+
+        public async Task<IActionResult> RejectApplication(int applicationId, int employerId)
+        {
+            var result = await _applicationsServices.RejectApplicationAsync(applicationId, employerId);
+            if (!result)
+                return NotFound();
+            return RedirectToAction(nameof(Applications), new { employerId });
+        }
+
+
 
     }
 }
