@@ -1,4 +1,5 @@
-﻿using Core.DTOs.Job;
+﻿using Core.DTOs.EmployerDTOs;
+using Core.DTOs.Job;
 using Core.Interfaces.IServices.IEmployer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,69 @@ namespace UI.Controllers
     public class EmployerController : Controller
     {
         private readonly IJobService _jobService;
-        public EmployerController(IJobService jobService)
+        private readonly IProfileService _profileService;
+        private readonly IApplicationsServices _applicationsServices;
+        public EmployerController(IJobService jobService, IProfileService profileService, IApplicationsServices applicationsServices
+            )
         {
             _jobService = jobService;
+            _profileService = profileService;
+            _applicationsServices = applicationsServices;
         }
+
+        // Employer profile management
+
+        public async Task<IActionResult> Profile(int employerId)
+        {
+            var profile = await _profileService.GetProfileAsync(employerId);
+            if (profile == null)
+                return NotFound();
+            return View(profile);
+        }
+        public async Task<IActionResult> EditProfile(int employerId)
+        {
+
+            var profile = await _profileService.GetProfileAsync(employerId);
+            if (profile == null)
+                return NotFound();
+
+            return View(profile);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(int employerId, EditEmployerProfileDto model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            var isUpdated = await _profileService.UpdateProfileAsync(employerId, model);
+            if (!isUpdated)
+            {
+                ModelState.AddModelError("", "Failed to update profile.");
+                return View(model);
+            }
+            return RedirectToAction(nameof(Profile), new { employerId });
+        }
+
+        public IActionResult ChangePassword(int employerId)
+        {
+            ViewBag.EmployerId = employerId;
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(int employerId, ChangePasswordDto model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            var result = await _profileService.ChangePasswordAsync(employerId, model);
+            if (!result)
+            {
+                ModelState.AddModelError("", "Failed to change password.");
+                return View(model);
+            }
+            return RedirectToAction(nameof(Profile), new { employerId });
+        }
+
         // Employer manages their job 
         public async Task<IActionResult> Jobs(int employerId)
         {
@@ -24,12 +84,12 @@ namespace UI.Controllers
             var job = await _jobService.GetJobByIdAsync(jobId, employerId);
             if (job == null)
                 return NotFound();
-            return View(job); 
+            return View(job);
         }
         public IActionResult CreateJob(int employerId)
         {
             ViewBag.EmployerId = employerId;
-            return View(); 
+            return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -79,7 +139,7 @@ namespace UI.Controllers
 
             if (!isUpdated)
             {
-                return NotFound(); 
+                return NotFound();
             }
 
             return RedirectToAction("JobDetails", new { jobId = jobId, employerId = employerId });
@@ -107,5 +167,39 @@ namespace UI.Controllers
             await _jobService.DeleteJobAsync(jobId, employerId);
             return RedirectToAction(nameof(Jobs), new { employerId });
         }
+
+
+        // View applicants for a specific job
+        public async Task<IActionResult> Applications(int employerId, string? jobTitle, string? applicantName)
+        {
+            var applications = await _applicationsServices.GetApplicationsByEmployerAsync(employerId, jobTitle, applicantName);
+            ViewBag.EmployerId = employerId;
+            return View(applications);
+        }
+        public async Task<IActionResult> ApplicationDetails(int applicationId, int employerId)
+        {
+            var application = await _applicationsServices.GetApplicationDetailsAsync(applicationId, employerId);
+            if (application == null)
+                return NotFound();
+            return View(application);
+        }
+        public async Task<IActionResult> AcceptApplication(int applicationId, int employerId)
+        {
+            var result = await _applicationsServices.AcceptApplicationAsync(applicationId, employerId);
+            if (!result)
+                return NotFound();
+            return RedirectToAction(nameof(Applications), new { employerId });
+        }
+
+        public async Task<IActionResult> RejectApplication(int applicationId, int employerId)
+        {
+            var result = await _applicationsServices.RejectApplicationAsync(applicationId, employerId);
+            if (!result)
+                return NotFound();
+            return RedirectToAction(nameof(Applications), new { employerId });
+        }
+
+
+
     }
 }

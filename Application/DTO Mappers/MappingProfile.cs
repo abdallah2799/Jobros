@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Core.DTOs.Admin;
+using Core.DTOs.Application;
 using Core.DTOs.Auth;
+using Core.DTOs.EmployerDTOs;
+using Core.DTOs.Job;
 using Core.Entities;
 using Microsoft.AspNetCore.Identity;
 
@@ -47,6 +50,26 @@ namespace Application.DTO_Mappers
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Job.Employer.CompanyName));
 
             CreateMap<Employer, EmployerDropdownDTO>();
+
+
+            // mapping Employer to EmployerDTO
+            CreateMap<Core.Entities.Application, ApplicationsDTo>()
+              .ForMember(dest => dest.JobTitle, opt => opt.MapFrom(src => src.Job.Title))
+              .ForMember(dest => dest.ApplicantName, opt => opt.MapFrom(src => src.JobSeeker.FullName))
+              .ForMember(dest => dest.ApplicantEmail, opt => opt.MapFrom(src => src.JobSeeker.Email));
+
+            CreateMap<Core.Entities.Application, ApplicationDetailsDto>()
+                .ForMember(dest => dest.JobTitle, opt => opt.MapFrom(src => src.Job.Title))
+                .ForMember(dest => dest.ApplicantName, opt => opt.MapFrom(src => src.JobSeeker.FullName))
+                .ForMember(dest => dest.ApplicantEmail, opt => opt.MapFrom(src => src.JobSeeker.Email))
+                .ForMember(dest => dest.CvFilePath, opt => opt.MapFrom(src => src.JobSeeker.ResumeUrl));
+
+            CreateMap<Employer, EmployerProfileDto>().ReverseMap();
+            CreateMap<EditEmployerProfileDto, Employer>().ReverseMap();
+
+            CreateMap<CreateJobDto, Job>().ReverseMap();
+            CreateMap<EditJobDto, Job>().ReverseMap();
+
         }
     }
 }
