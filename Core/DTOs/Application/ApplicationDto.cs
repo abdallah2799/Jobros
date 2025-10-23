@@ -11,5 +11,8 @@ namespace Core.DTOs.Application
         public DateTime AppliedAt { get; set; }
         public string CoverLetter { get; set; }
         public string JobTitle { get; set; }
+
+        public string EmployerName { get; set; }
+
     }
 }

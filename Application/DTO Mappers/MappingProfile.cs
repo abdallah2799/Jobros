@@ -39,7 +39,7 @@ namespace Application.DTO_Mappers
                 .ForMember(d => d.JobTitle, opt => opt.MapFrom(s => s.Job.Title));
 
             // JobSeeker -> JobSeekerDto
-            CreateMap<Core.Entities.JobSeeker, Core.DTOs.JobSeeker.JobSeekerDto>();
+            CreateMap<JobSeeker, Core.DTOs.JobSeeker.JobSeekerDto>();
 
             CreateMap<Job, JobAdminViewDTO>()
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Employer.CompanyName));
