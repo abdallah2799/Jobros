@@ -10,6 +10,7 @@ The project follows **Onion Architecture**, ensuring clean separation between bu
 
 ## 🧱 Architecture Overview
 
+```
 Jobros.sln
 │
 ├── Core
@@ -34,7 +35,7 @@ Jobros.sln
 ├── Views
 ├── wwwroot
 ├── appsettings.json
-
+```
 
 ---
 
