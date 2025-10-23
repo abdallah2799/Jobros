@@ -1,0 +1,108 @@
+﻿@model UI.Models.JobSeeker.ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<!-- Hero Start -->
+<div class="container-fluid bg-primary py-5 mb-5 hero-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h1 class="display-3 text-white animated slideInDown">My Profile</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="/">Home</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Profile</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+<!-- Profile Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <h2 class="mb-4">Personal Information</h2>
+                <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Profile.Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Profile.FullName" class="form-label">Full Name</label>
+                        <input asp-for="Profile.FullName" class="form-control" />
+                        <span asp-validation-for="Profile.FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Profile.Bio" class="form-label">Bio</label>
+                        <textarea asp-for="Profile.Bio" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Profile.Bio" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Profile.Skills" class="form-label">Skills (comma-separated)</label>
+                        <input asp-for="Profile.Skills" class="form-control" placeholder="e.g., C#, ASP.NET, SQL" />
+                        <span asp-validation-for="Profile.Skills" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Profile.ExperienceYears" class="form-label">Years of Experience</label>
+                        <input asp-for="Profile.ExperienceYears" type="number" class="form-control" min="0" max="50" />
+                        <span asp-validation-for="Profile.ExperienceYears" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ResumeFile" class="form-label">Upload CV (PDF/DOC/DOCX, max 5MB)</label>
+                        <input asp-for="ResumeFile" type="file" class="form-control" accept=".pdf,.doc,.docx" />
+                        <div class="form-text">
+                            @if (!string.IsNullOrEmpty(Model.Profile.ResumeUrl))
+                            {
+                                <a href="@Model.Profile.ResumeUrl" target="_blank" class="text-primary">View current CV</a>
+                            }
+                            else
+                            {
+                                <span>No CV uploaded yet.</span>
+                            }
+                        </div>
+                        <span asp-validation-for="ResumeFile" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary py-3 px-5">Save Changes</button>
+                </form>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bg-light rounded p-4 mb-4 text-center">
+                    <img class="img-fluid rounded-circle mb-3" src="~/img/testimonial-1.jpg" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h5>@Model.Profile.FullName</h5>
+                    <p class="text-muted">Job Seeker</p>
+                    @if (!string.IsNullOrEmpty(Model.Profile.ResumeUrl))
+                    {
+                        <a href="@Model.Profile.ResumeUrl" target="_blank" class="btn btn-outline-primary btn-sm">Download CV</a>
+                    }
+                </div>
+
+                <div class="bg-light rounded p-4">
+                    <h5 class="mb-3">Profile Completeness</h5>
+                    @{
+                        var completeness = 0;
+                        if (!string.IsNullOrEmpty(Model.Profile.FullName)) completeness += 25;
+                        if (!string.IsNullOrEmpty(Model.Profile.Bio)) completeness += 25;
+                        if (!string.IsNullOrEmpty(Model.Profile.Skills)) completeness += 25;
+                        if (!string.IsNullOrEmpty(Model.Profile.ResumeUrl)) completeness += 25;
+                    }
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @completeness%" aria-valuenow="@completeness" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted mt-2 d-block">@completeness% Complete</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Profile End -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
