@@ -1,10 +1,14 @@
+using System;
 using Core.DTOs.Application;
-using Core.DTOs.Job;
 using Core.Interfaces.IServices.Commands;
 using Core.Interfaces.IServices.IQueries;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 using System.Security.Claims;
+using UI.Models.JobSeeker;
+using Core.DTOs.JobSeeker;
 
 namespace UI.Controllers
 {
@@ -22,66 +26,124 @@ namespace UI.Controllers
 
         private int CurrentUserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
+        private async Task<string> SaveFileAsync(IFormFile file, string folder)
+        {
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folder);
+            Directory.CreateDirectory(uploadsFolder);
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            return $"/uploads/{folder}/{fileName}";
+        }
+
         // 1. Job Browsing
         public async Task<IActionResult> Browse(string keyword = null, int? categoryId = null, string employer = null, string location = null, string jobType = null, int page = 1)
         {
             var jobs = await _queryService.GetActiveJobsAsync(keyword, categoryId, employer, location, jobType, page, 10);
-            return View(jobs);
+            var totalCount = await _queryService.GetActiveJobsTotalCountAsync(keyword, categoryId, employer, location, jobType);
+            var totalPages = (int)Math.Ceiling(totalCount / 10.0);
+
+            var model = new BrowseJobsViewModel
+            {
+                Jobs = jobs,
+                Keyword = keyword ?? "",
+                CategoryId = categoryId,
+                Employer = employer ?? "",
+                Location = location ?? "",
+                JobType = jobType ?? "",
+                Page = page,
+                TotalPages = totalPages
+            };
+
+            return View(model);
         }
 
+        // 2. Job Details
         public async Task<IActionResult> Details(int id)
         {
             var job = await _queryService.GetJobByIdAsync(id);
             if (job == null) return NotFound();
-            return View(job);
+
+            var alreadyApplied = await _queryService.HasAppliedAsync(CurrentUserId, id);
+
+            var model = new JobDetailsViewModel
+            {
+                Job = job,
+                AlreadyApplied = alreadyApplied
+            };
+
+            return View(model);
         }
 
-        // 2. Apply
+        // 3. Apply (no file upload — uses profile CV)
         [HttpPost]
         public async Task<IActionResult> Apply(ApplicationCreateDto dto)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                var result = await _commandService.ApplyAsync(CurrentUserId, dto);
-                TempData["Success"] = "Application submitted successfully.";
-                return RedirectToAction(nameof(Applications));
-            }
-            catch (System.Exception ex)
-            {
-                TempData["Error"] = ex.Message;
                 return RedirectToAction(nameof(Details), new { id = dto.JobId });
             }
+
+            try
+            {
+                await _commandService.ApplyAsync(CurrentUserId, dto);
+                TempData["SuccessMessage"] = "Application submitted successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            return RedirectToAction(nameof(Applications));
         }
 
-        // 3. Profile
+        // 4. Profile
         public async Task<IActionResult> Profile()
         {
             var profile = await _queryService.GetProfileAsync(CurrentUserId);
             if (profile == null) return NotFound();
-            return View(profile);
+
+            return View(new ProfileViewModel { Profile = profile });
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditProfile(Core.DTOs.JobSeeker.JobSeekerUpdateDto dto)
+        public async Task<IActionResult> EditProfile(ProfileViewModel model)
         {
+            string? resumeUrl = null;
+            if (model.ResumeFile != null)
+            {
+                // Optional: validate file type/size here
+                resumeUrl = await SaveFileAsync(model.ResumeFile, "resumes");
+            }
+
+            var dto = new JobSeekerUpdateDto
+            {
+                FullName = model.Profile.FullName,
+                Bio = model.Profile.Bio,
+                Skills = model.Profile.Skills,
+                ExperienceYears = model.Profile.ExperienceYears
+            };
+
             try
             {
-                await _commandService.UpdateProfileAsync(CurrentUserId, dto);
-                TempData["Success"] = "Profile updated.";
-                return RedirectToAction(nameof(Profile));
+                await _commandService.UpdateProfileAsync(CurrentUserId, dto, resumeUrl);
+                TempData["SuccessMessage"] = "Profile updated.";
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
-                return RedirectToAction(nameof(Profile));
+                TempData["ErrorMessage"] = ex.Message;
             }
+
+            return RedirectToAction(nameof(Profile));
         }
 
-        // 4. Applications
+        // 5. Applications
         public async Task<IActionResult> Applications()
         {
             var apps = await _queryService.GetApplicationsByJobSeekerAsync(CurrentUserId);
-            return View(apps);
+            return View(new ApplicationsViewModel { Applications = apps });
         }
 
         [HttpPost]
@@ -90,11 +152,11 @@ namespace UI.Controllers
             try
             {
                 await _commandService.DeleteApplicationAsync(CurrentUserId, id);
-                TempData["Success"] = "Application deleted.";
+                TempData["SuccessMessage"] = "Application deleted.";
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                TempData["Error"] = ex.Message;
+                TempData["ErrorMessage"] = ex.Message;
             }
             return RedirectToAction(nameof(Applications));
         }
