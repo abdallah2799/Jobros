@@ -1,16 +1,17 @@
 using AutoMapper;
 using Core.DTOs.Application;
 using Core.DTOs.Job;
+using Core.DTOs.JobSeeker;
 using Core.Entities;
 using Core.Interfaces.IServices.Commands;
-using Core.Interfaces.IUnitOfWorks;
-using System.Linq;
+using Core.Interfaces.IServices.IEmailServices;
 using Core.Interfaces.IServices.IQueries;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Core.DTOs.JobSeeker;
+using Core.Interfaces.IUnitOfWorks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -19,12 +20,14 @@ namespace Application.Services
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailService _emailService;
 
-        public JobSeekerService(IUnitOfWork uow, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public JobSeekerService(IUnitOfWork uow, IMapper mapper, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _uow = uow;
             _mapper = mapper;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         public async Task<IEnumerable<JobDto>> GetActiveJobsAsync(string? keyword = null, int? categoryId = null, string? employerName = null, string? location = null, string? jobType = null, int page = 1, int pageSize = 10)
@@ -55,8 +58,8 @@ namespace Application.Services
             if (!string.IsNullOrWhiteSpace(jobType))
                 query = query.Where(j => j.JobType == jobType);
 
-            var skip = (page - 1) * pageSize;
 
+            var skip = (page - 1) * pageSize;
             var list = await query
                 .Include(j => j.Employer)
                 .OrderByDescending(j => j.CreatedAt)
@@ -67,11 +70,47 @@ namespace Application.Services
             return list.Select(j => _mapper.Map<JobDto>(j));
         }
 
+        public async Task<int> GetActiveJobsTotalCountAsync(string? keyword = null, int? categoryId = null, string? employerName = null, string? location = null, string? jobType = null)
+        {
+            var query = _uow.Jobs.AsQueryable().Where(j => j.IsActive);
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                var k = keyword.Trim().ToLower();
+                query = query.Where(j => j.Title.ToLower().Contains(k) || j.Description.ToLower().Contains(k) || j.Requirements.ToLower().Contains(k));
+            }
+
+            if (categoryId.HasValue)
+                query = query.Where(j => j.CategoryId == categoryId.Value);
+
+            if (!string.IsNullOrWhiteSpace(employerName))
+            {
+                var en = employerName.Trim().ToLower();
+                query = query.Where(j => j.Employer.FullName.ToLower().Contains(en) || j.Employer.CompanyName.ToLower().Contains(en));
+            }
+
+            if (!string.IsNullOrWhiteSpace(location))
+            {
+                var l = location.Trim().ToLower();
+                query = query.Where(j => j.Location.ToLower().Contains(l));
+            }
+
+            if (!string.IsNullOrWhiteSpace(jobType))
+                query = query.Where(j => j.JobType == jobType);
+
+            return await query.CountAsync();
+        }
+
         public async Task<JobDto?> GetJobByIdAsync(int jobId)
         {
             var job = await _uow.Jobs.AsQueryable().Include(j => j.Employer).FirstOrDefaultAsync(j => j.Id == jobId && j.IsActive);
-            if (job == null) return null;
-            return _mapper.Map<JobDto>(job);
+            return job == null ? null : _mapper.Map<JobDto>(job);
+        }
+
+        public async Task<bool> HasAppliedAsync(int jobSeekerId, int jobId)
+        {
+            return await _uow.Applications.AsQueryable()
+                .AnyAsync(a => a.JobId == jobId && a.JobSeekerId == jobSeekerId);
         }
 
         public async Task<IEnumerable<ApplicationDto>> GetApplicationsByJobSeekerAsync(int jobSeekerId)
@@ -88,19 +127,18 @@ namespace Application.Services
         public async Task<JobSeekerDto?> GetProfileAsync(int jobSeekerId)
         {
             var js = await _uow.JobSeekers.AsQueryable().FirstOrDefaultAsync(j => j.Id == jobSeekerId);
-            if (js == null) return null;
-            return _mapper.Map<JobSeekerDto>(js);
+            return js == null ? null : _mapper.Map<JobSeekerDto>(js);
         }
 
         public async Task<ApplicationDto> ApplyAsync(int jobSeekerId, ApplicationCreateDto dto)
         {
             var job = await _uow.Jobs.GetByIdAsync(dto.JobId);
             if (job == null || !job.IsActive)
-                throw new System.Exception("Job not found or not active");
+                throw new Exception("Job not found or not active");
 
             var existing = await _uow.Applications.FindAsync(a => a.JobId == dto.JobId && a.JobSeekerId == jobSeekerId);
             if (existing.Any())
-                throw new System.Exception("Already applied to this job");
+                throw new Exception("Already applied to this job");
 
             var app = new Core.Entities.Application
             {
@@ -109,17 +147,18 @@ namespace Application.Services
                 CoverLetter = dto.CoverLetter,
             };
 
-            if (!string.IsNullOrWhiteSpace(dto.ResumeUrl))
-                app.JobSeeker = await _uow.JobSeekers.GetByIdAsync(jobSeekerId); 
-
             await _uow.Applications.AddAsync(app);
             await _uow.CompleteAsync();
 
+            // Send confirmation email
+            var jobSeeker = await _userManager.FindByIdAsync(jobSeekerId.ToString());
+            if (jobSeeker != null)
+            {
+                await _emailService.SendEmailAsync(jobSeeker.Email, "Application Submitted", $"Your application for '{job.Title}' has been received.");
+            }
+
             var result = _mapper.Map<ApplicationDto>(app);
             result.JobTitle = job.Title;
-
-            // TODO: send confirmation email using existing email service (not injected here)
-
             return result;
         }
 
@@ -127,37 +166,44 @@ namespace Application.Services
         {
             var app = await _uow.Applications.GetByIdAsync(applicationId);
             if (app == null || app.JobSeekerId != jobSeekerId)
-                throw new System.Exception("Application not found");
+                throw new Exception("Application not found");
 
             if (app.Status != "Pending")
-                throw new System.Exception("Only pending applications can be deleted");
+                throw new Exception("Only pending applications can be deleted");
 
             _uow.Applications.Delete(app);
             await _uow.CompleteAsync();
             return true;
         }
 
-        public async Task<bool> UpdateProfileAsync(int jobSeekerId, JobSeekerUpdateDto dto)
+        public async Task<bool> UpdateProfileAsync(int jobSeekerId, JobSeekerUpdateDto dto, string? resumeUrl = null)
         {
             var js = await _uow.JobSeekers.GetByIdAsync(jobSeekerId);
             if (js == null)
-                throw new System.Exception("JobSeeker not found");
+                throw new Exception("JobSeeker not found");
 
             js.FullName = dto.FullName ?? js.FullName;
             js.Bio = dto.Bio;
             js.Skills = dto.Skills;
             js.ExperienceYears = dto.ExperienceYears;
-            js.ResumeUrl = dto.ResumeUrl;
+            if (!string.IsNullOrEmpty(resumeUrl))
+                js.ResumeUrl = resumeUrl;
 
             _uow.JobSeekers.Update(js);
             await _uow.CompleteAsync();
             return true;
         }
 
-        public Task<bool> ChangePasswordAsync(int jobSeekerId, string currentPassword, string newPassword)
+        public async Task<bool> ChangePasswordAsync(int jobSeekerId, string currentPassword, string newPassword)
         {
-            
-            throw new System.NotImplementedException();
+            var user = await _userManager.FindByIdAsync(jobSeekerId.ToString());
+            if (user == null) throw new Exception("User not found");
+
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if (!result.Succeeded)
+                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            return true;
         }
     }
 }

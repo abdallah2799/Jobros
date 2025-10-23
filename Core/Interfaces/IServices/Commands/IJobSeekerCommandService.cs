@@ -1,4 +1,6 @@
 using Core.DTOs.Application;
+using Core.DTOs.Job;
+using Core.DTOs.JobSeeker;
 using System.Threading.Tasks;
 
 namespace Core.Interfaces.IServices.Commands
@@ -7,7 +9,7 @@ namespace Core.Interfaces.IServices.Commands
     {
         Task<ApplicationDto> ApplyAsync(int jobSeekerId, ApplicationCreateDto dto);
         Task<bool> DeleteApplicationAsync(int jobSeekerId, int applicationId);
-        Task<bool> UpdateProfileAsync(int jobSeekerId, Core.DTOs.JobSeeker.JobSeekerUpdateDto dto);
+        Task<bool> UpdateProfileAsync(int jobSeekerId, JobSeekerUpdateDto dto, string? resumeUrl = null);
         Task<bool> ChangePasswordAsync(int jobSeekerId, string currentPassword, string newPassword);
     }
 }
