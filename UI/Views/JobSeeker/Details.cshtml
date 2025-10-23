@@ -1,0 +1,116 @@
+﻿@model UI.Models.JobSeeker.JobDetailsViewModel
+@{
+    ViewData["Title"] = "Job Details";
+}
+
+<!-- Hero Start -->
+<div class="container-fluid bg-primary py-5 mb-5 hero-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h1 class="display-3 text-white animated slideInDown">@Model.Job.Title</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a class="text-white" asp-action="Browse">Jobs</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Details</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+<!-- Job Detail Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center mb-4">
+                    <img class="flex-shrink-0 img-fluid border rounded" src="~/img/com-logo-1.jpg" alt="Company Logo" style="width: 80px; height: 80px;">
+                    <div class="text-start ps-4">
+                        <h3 class="mb-1">@Model.Job.Title</h3>
+                        <span class="text-truncate"><i class="fa fa-map-marker-alt text-primary me-2"></i>@Model.Job.Location</span>
+                    </div>
+                </div>
+
+                <h4 class="mb-4">Job Description</h4>
+                <p>@Model.Job.Description</p>
+
+                <h4 class="mb-4">Requirements</h4>
+                <p>@Model.Job.Requirements</p>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-clock text-primary me-2"></i>
+                            <span>@Model.Job.JobType</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-money-bill-alt text-primary me-2"></i>
+                            <span>@(string.IsNullOrEmpty(Model.Job.SalaryRange) ? "Negotiable" : Model.Job.SalaryRange)</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="far fa-calendar-alt text-primary me-2"></i>
+                            <span>Posted: @Model.Job.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-building text-primary me-2"></i>
+                            <span>@Model.Job.EmployerName</span>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.AlreadyApplied)
+                {
+                    <div class="alert alert-success d-flex align-items-center" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <div>You have already applied to this job.</div>
+                    </div>
+                }
+                else
+                {
+                    <h4 class="mb-4">Apply Now</h4>
+                    <form asp-action="Apply" method="post">
+                        <input type="hidden" name="JobId" value="@Model.Job.Id" />
+                        <div class="mb-3">
+                            <label for="CoverLetter" class="form-label">Cover Letter</label>
+                            <textarea class="form-control" id="CoverLetter" name="CoverLetter" rows="5" placeholder="Write a brief cover letter..." required></textarea>
+                            <span class="text-danger" asp-validation-for="CoverLetter"></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary py-3 px-5">Submit Application</button>
+                    </form>
+                }
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bg-light rounded p-4 mb-4">
+                    <h5 class="mb-4">Job Summary</h5>
+                    <p><i class="fa fa-map-marker-alt text-primary me-2"></i>@Model.Job.Location</p>
+                    <p><i class="far fa-clock text-primary me-2"></i>@Model.Job.JobType</p>
+                    <p><i class="far fa-money-bill-alt text-primary me-2"></i>@(string.IsNullOrEmpty(Model.Job.SalaryRange) ? "Negotiable" : Model.Job.SalaryRange)</p>
+                    <p><i class="fa fa-building text-primary me-2"></i>@Model.Job.EmployerName</p>
+                    <p><i class="far fa-calendar-alt text-primary me-2"></i>Posted: @Model.Job.CreatedAt.ToString("MMM dd, yyyy")</p>
+                </div>
+
+                <div class="bg-light rounded p-4">
+                    <h5 class="mb-4">Share This Job</h5>
+                    <a class="btn btn-outline-primary btn-social me-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-outline-primary btn-social me-2" href="#"><i class="fab fa-twitter"></i></a>
+                    <a class="btn btn-outline-primary btn-social me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a class="btn btn-outline-primary btn-social" href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Job Detail End -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
