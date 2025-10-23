@@ -19,11 +19,15 @@
 
     <!-- Libraries -->
     <link href="~/lib/animate/animate.min.css" rel="stylesheet">
+    <!-- Optional Animate.css for smooth entrance animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
     <!-- Bootstrap & Main CSS -->
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/css/style.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="~/css/custom.css" rel="stylesheet">
 </head>
 
 <body>
@@ -102,19 +106,19 @@
         // Auto-toast support for TempData
         @if (TempData["SuccessMessage"] != null)
         {
-                <text>showToast('@TempData["SuccessMessage"]', 'success');</text>
+                    <text>showToast('@TempData["SuccessMessage"]', 'success');</text>
         }
         @if (TempData["ErrorMessage"] != null)
         {
-                <text>showToast('@TempData["ErrorMessage"]', 'error');</text>
+                    <text>showToast('@TempData["ErrorMessage"]', 'error');</text>
         }
         @if (TempData["WarningMessage"] != null)
         {
-                <text>showToast('@TempData["WarningMessage"]', 'warning');</text>
+                    <text>showToast('@TempData["WarningMessage"]', 'warning');</text>
         }
         @if (TempData["InfoMessage"] != null)
         {
-                <text>showToast('@TempData["InfoMessage"]', 'info');</text>
+                    <text>showToast('@TempData["InfoMessage"]', 'info');</text>
         }
     </script>
 

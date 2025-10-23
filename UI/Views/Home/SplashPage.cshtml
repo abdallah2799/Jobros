@@ -1,0 +1,151 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "SplashPage";
+}
+
+
+<div class="container-fluid p-0">
+    <div class="owl-carousel header-carousel position-relative">
+        <div class="owl-carousel-item position-relative">
+            <img class="img-fluid" src="img/hero.jpg" alt="">
+            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(43, 57, 64, .5);">
+                <div class="container">
+                    <div class="row justify-content-start">
+                        <div class="col-10 col-lg-8">
+                            <h1 class="display-3 text-white animated slideInDown mb-4">Find Your Dream Job With Jobros</h1>
+                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Discover thousands of job opportunities and connect with top employers to build the career you’ve always wanted.</p>
+                            <a asp-controller="Auth" asp-action="Login" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Search A Job</a>
+                            <a asp-controller="Auth" asp-action="Login" class="btn btn-secondary py-md-3 px-md-5 animated slideInRight">Find A Talent</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="owl-carousel-item position-relative">
+            <img class="img-fluid" src="img/im.jpg" alt="">
+            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(43, 57, 64, .5);">
+                <div class="container">
+                    <div class="row justify-content-start">
+                        <div class="col-10 col-lg-8">
+                            <h1 class="display-3 text-white animated slideInDown mb-4">Find The Best Startup Job That Fit You</h1>
+                            <p class="fs-5 fw-medium text-white mb-4 pb-2">Explore exciting opportunities at top startups and shape your future career with Jobros.</p>
+                            <a asp-controller="Auth" asp-action="Login" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Search A Job</a>
+                            <a asp-controller="Auth" asp-action="Login" class="btn btn-secondary py-md-3 px-md-5 animated slideInRight">Find A Talent</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="padding: 35px;">
+    <div class="container">
+        <div class="row g-2">
+            <div class="col-md-10">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control border-0" placeholder="Keyword" />
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select border-0">
+                            <option selected disabled>Choose Category</option>
+                            <option value="IT">IT / Software</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Education">Education</option>
+                            <option value="Sales">Sales & Marketing</option>
+                            <option value="Healthcare">Healthcare</option>
+
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select border-0" name="Location">
+                            <option selected disabled>Choose Location</option>
+                            <option value="Cairo">Cairo</option>
+                            <option value="Giza">Giza</option>
+                            <option value="Alexandria">Alexandria</option>
+                            <option value="Aswan">Aswan</option>
+                            <option value="Remote">Remote</option>
+                        </select>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-dark w-100 border-0 text-center">Search</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-xxl py-5 wow fadeInUp" ">
+    <div class="container">
+        <h1 class="text-center mb-5">What Our Clients Say</h1>
+        <div class="owl-carousel testimonial-carousel">
+
+            <!-- Testimonial 1 -->
+            <div class="testimonial-item bg-light rounded p-4">
+                <i class="fa fa-quote-left fa-2x text-primary mb-3"></i>
+                <p style="font-size: 14px;">“Jobros helped me land a great job in a very short time. The platform is easy to use and professional.”</p>
+                <div class="d-flex align-items-center">
+                    <img class="img-fluid flex-shrink-0 rounded"
+                         src="https://randomuser.me/api/portraits/men/11.jpg"
+                         style="width: 50px; height: 50px; object-fit: cover;">
+                    <div class="ps-3">
+                        <h5 class="mb-1">Ahmed Hassan</h5>
+                        <small>Software Engineer</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="testimonial-item bg-light rounded p-4">
+                <i class="fa fa-quote-left fa-2x text-primary mb-3"></i>
+                <p style="font-size: 14px;">“An amazing experience! I connected with top companies and got multiple interview offers.”</p>
+                <div class="d-flex align-items-center">
+                    <img class="img-fluid flex-shrink-0 rounded"
+                         src="https://randomuser.me/api/portraits/men/22.jpg"
+                         style="width: 50px; height: 50px; object-fit: cover;">
+                    <div class="ps-3">
+                        <h5 class="mb-1">Omar Youssef</h5>
+                        <small>Frontend Developer</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="testimonial-item bg-light rounded p-4">
+                <i class="fa fa-quote-left fa-2x text-primary mb-3"></i>
+                <p style="font-size: 14px;">“Thanks to Jobros, I found skilled developers for my team faster than ever. Highly recommended.”</p>
+                <div class="d-flex align-items-center">
+                    <img class="img-fluid flex-shrink-0 rounded"
+                         src="https://randomuser.me/api/portraits/men/33.jpg"
+                         style="width: 50px; height: 50px; object-fit: cover;">
+                    <div class="ps-3">
+                        <h5 class="mb-1">Mohamed Adel</h5>
+                        <small>HR Manager</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 4 -->
+            <div class="testimonial-item bg-light rounded p-4">
+                <i class="fa fa-quote-left fa-2x text-primary mb-3"></i>
+                <p style="font-size: 14px;">“The platform is full of opportunities and super easy to navigate. I truly recommend it to job seekers.”</p>
+                <div class="d-flex align-items-center">
+                    <img class="img-fluid flex-shrink-0 rounded"
+                         src="https://randomuser.me/api/portraits/men/44.jpg"
+                         style="width: 50px; height: 50px; object-fit: cover;">
+                    <div class="ps-3">
+                        <h5 class="mb-1">Youssef Nabil</h5>
+                        <small>Marketing Specialist</small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

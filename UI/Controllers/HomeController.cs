@@ -6,6 +6,10 @@ namespace UI.Controllers
 {
     public class HomeController : Controller
     {
+        public IActionResult SplashPage()
+        {
+            return View();
+        }
 
         public IActionResult Index()
         {

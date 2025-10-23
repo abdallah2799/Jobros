@@ -1,0 +1,146 @@
+﻿@model Core.DTOs.Admin.AnnouncementDTO
+
+@{
+    ViewData["Title"] = "Send Announcement";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container my-5">
+
+    <h2 class="text-center mb-3 fw-bold" style="color: #00B074;">
+        📣 Send Announcement to All Users
+    </h2>
+    <p class="text-center lead mb-5">Send important updates and announcements via email to all registered users</p>
+
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 15px;">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 15px;">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong>Error!</strong> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Announcement Form -->
+    <div class="card shadow" style="border-radius: 25px; border: 2px solid #ccc;">
+
+        <!-- Card Header -->
+        <div class="card-header d-flex align-items-center justify-content-center"
+             style="background: linear-gradient(45deg, #00B074, #00B074); border-radius: 25px 25px 0 0; padding: 1rem 2rem;">
+            <i class="fas fa-bullhorn fa-lg me-2" style="color: black; font-size: 1.2rem;"></i>
+            <h4 class="mb-0 fw-bold" style="color: black; font-size: 1.5rem;">Compose Announcement</h4>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body p-5">
+            <form asp-action="SendAnnouncement" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-4">
+                    <label for="Subject" class="form-label fw-semibold" style="font-size: 1.1rem;">
+                        <i class="fas fa-tag me-2" style="color: #00B074;"></i>Subject
+                    </label>
+                    <input asp-for="Subject"
+                           class="form-control form-input"
+                           placeholder="Enter announcement subject..."
+                           style="border-radius: 10px; padding: 0.75rem;" />
+                    <span asp-validation-for="Subject" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label for="Body" class="form-label fw-semibold" style="font-size: 1.1rem;">
+                        <i class="fas fa-file-alt me-2" style="color: #00B074;"></i>Message Body
+                    </label>
+                    <textarea asp-for="Body"
+                              class="form-control form-input"
+                              rows="10"
+                              placeholder="Write your announcement message here... (HTML supported)"
+                              style="border-radius: 10px; padding: 0.75rem;"></textarea>
+                    <span asp-validation-for="Body" class="text-danger small"></span>
+                    <small class="form-text text-muted mt-2 d-block">
+                        <i class="fas fa-info-circle me-1"></i>
+                        You can use HTML formatting in the message body.
+                    </small>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="card bg-light mb-4" style="border-radius: 15px; border: 1px solid #dee2e6;">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3" style="color: #00B074;">
+                            <i class="fas fa-eye me-2"></i>Preview Tips:
+                        </h6>
+                        <ul class="mb-0 small">
+                            <li>This announcement will be sent to <strong>all registered users</strong> (Admins, Employers, and Job Seekers)</li>
+                            <li>Make sure to proofread your message before sending</li>
+                            <li>Use clear and professional language</li>
+                            <li>Include any important dates or deadlines</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 justify-content-center">
+                    <button type="submit"
+                            class="btn btn-lg px-5"
+                            style="background: linear-gradient(45deg, #00B074, #00B074);
+                                   border: 2px solid #00B074;
+                                   color: white;
+                                   border-radius: 15px;
+                                   font-weight: 600;
+                                   min-width: 200px;">
+                        <i class="fas fa-paper-plane me-2"></i>Send Announcement
+                    </button>
+
+                    <a asp-action="Dashboard"
+                       class="btn btn-lg px-5"
+                       style="background: linear-gradient(45deg, #6c757d, #6c757d);
+                              border: 2px solid #6c757d;
+                              color: white;
+                              border-radius: 15px;
+                              font-weight: 600;
+                              min-width: 200px;">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Information Card -->
+    <div class="card shadow-sm mt-4" style="border-radius: 20px; border: 2px solid #00B074; background-color: #f0f9f5;">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-3" style="color: #00B074;">
+                <i class="fas fa-lightbulb me-2"></i>Best Practices for Announcements
+            </h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="mb-0">
+                        <li class="mb-2">Keep the subject line clear and concise</li>
+                        <li class="mb-2">Use professional and respectful language</li>
+                        <li class="mb-2">Include all necessary details</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="mb-0">
+                        <li class="mb-2">Specify action items or deadlines clearly</li>
+                        <li class="mb-2">Proofread before sending</li>
+                        <li class="mb-2">Consider the timing of your announcement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

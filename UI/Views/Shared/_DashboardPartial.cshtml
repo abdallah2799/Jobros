@@ -1,0 +1,77 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Core.Entities
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<div class="d-flex vh-100">
+    <!-- Sidebar -->
+    <div class="d-flex flex-column flex-shrink-0 p-3 bg-light shadow-sm" style="width: 250px;">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+            <span class="fs-4 fw-bold text-success">Admin Panel</span>
+        </a>
+        <hr />
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("Dashboard", "Admin")"
+                   class="nav-link d-flex align-items-center justify-content-between
+                   @(currentAction=="Dashboard" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    📊 Dashboard
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("RegistrationAnalytics", "Admin")"
+                   class="nav-link d-flex align-items-center justify-content-between
+                   @(currentAction=="RegistrationAnalytics" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    📝 Daily Registrations
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("JobOversight", "Admin")"
+                   class="nav-link d-flex align-items-center justify-content-between
+                   @(currentAction=="JobOversight" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    💼 Jobs
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("OverdueApplications", "Admin")"
+                   class="nav-link d-flex align-items-center justify-content-between
+                   @(currentAction=="OverdueApplications" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    📄 Applications
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("Announcements", "Admin")"
+                   class="nav-link d-flex align-items-center justify-content-between
+                   @(currentAction=="Announcements" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    📣 Announcements
+                </a>
+            </li>
+        </ul>
+    
+
+        <div class="mt-auto">
+            <hr />
+
+            <form method="post" asp-controller="Home" asp-action="Index">
+                    @Html.AntiForgeryToken()
+                <button type="submit" class="btn w-100 rounded-4 shadow-sm btn-outline-success mb-2">
+                        🏠 Back to Home
+                    </button>
+                </form>
+            
+            <form method="post" asp-controller="Auth" asp-action="Logout">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn w-100 rounded-4 shadow-sm btn-outline-success">
+                    🔓 Log Out
+                </button>
+            </form>
+        </div>
+
+        
+    </div>
+
+   
+</div>

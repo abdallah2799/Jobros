@@ -1,70 +1,101 @@
 @model IEnumerable<Core.DTOs.Admin.OverdueApplicationDTO>
-
 @{
     ViewData["Title"] = "Overdue Application Monitoring";
-    var daysThreshold = ViewData["DaysThreshold"] as int? ?? 7; // Get the threshold from ViewData
+    var daysThreshold = ViewData["DaysThreshold"] as int? ?? 7;
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h1 class="mb-3">Overdue Application Monitoring</h1>
-<p class="lead">Monitoring employers who have not responded to pending applications.</p>
-<hr />
+<div class="container my-5">
 
-<!-- Filtering Form -->
-<div class="card bg-light mb-4">
-    <div class="card-body">
-        <form asp-action="OverdueApplications" method="get" class="row align-items-end">
-            <div class="col-md-4">
-                <label for="days" class="form-label fw-bold">Show applications pending for more than:</label>
+    <h2 class="text-center mb-3 fw-bold" style="color: #00B074;">
+        &#x1F4CA; Overdue Application Monitoring
+    </h2>
+    <p class="text-center lead mb-5">Monitoring employers who have not responded to pending applications.</p>
+
+    <!-- Filtering Form -->
+    <div class="card shadow-sm mb-5 p-4" style="border-radius: 25px; border: 2px solid #ccc;">
+        <div class="card-header d-flex align-items-center"
+             style="background: linear-gradient(45deg, #00B074, #00B074); border-radius: 25px 25px 0 0; padding: 1rem 2rem; margin: -1rem -1rem 1.5rem -1rem;">
+            <i class="fas fa-filter fa-lg me-2" style="color: black;"></i>
+            <h4 class="mb-0 fw-bold" style="color: black;">Filter Applications</h4>
+        </div>
+
+        <form asp-action="OverdueApplications" method="get" class="row align-items-end g-3">
+            <div class="col-md-6">
+                <label for="days" class="form-label fw-semibold">Show applications pending for more than:</label>
                 <div class="input-group">
-                    <input type="number" name="days" class="form-control" value="@daysThreshold" min="1" />
-                    <span class="input-group-text">days</span>
+                    <input type="number" name="days" class="form-control form-input" value="@daysThreshold" min="1" />
+                    <span class="input-group-text" style="background-color: #00B074; color: white; border: 2px solid #00B074;">days</span>
                 </div>
             </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-primary">Apply Filter</button>
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-lg w-100"
+                        style="background: linear-gradient(45deg, #00B074, #00B074);
+                               border: 2px solid #00B074;
+                               color: white;
+                               border-radius: 15px;
+                               font-weight: 600;">
+                    Apply Filter
+                </button>
             </div>
         </form>
     </div>
+
+    <!-- Results -->
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm p-5 text-center" style="border-radius: 25px; border: 2px solid #00B074; background-color: #f0f9f5;">
+            <i class="fas fa-check-circle fa-3x mb-3" style="color: #00B074;"></i>
+            <h4 class="fw-bold" style="color: #00B074;">No Overdue Applications Found!</h4>
+            <p class="mb-0">There are no applications that have been pending for more than @daysThreshold day(s).</p>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm p-4" style="border-radius: 25px; border: 2px solid #ccc;">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr style="background: linear-gradient(45deg, #00B074, #00B074); color: white;">
+                            <th style="border: none; padding: 1rem;">Days Pending</th>
+                            <th style="border: none; padding: 1rem;">Job Title</th>
+                            <th style="border: none; padding: 1rem;">Applicant</th>
+                            <th style="border: none; padding: 1rem;">Company (Employer)</th>
+                            <th style="border: none; padding: 1rem;">Employer Contact</th>
+                            <th style="border: none; padding: 1rem;">Applied On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var app in Model)
+                        {
+                            <tr style="transition: background-color 0.2s;"
+                                onmouseover="this.style.backgroundColor='#f0f9f5';"
+                                onmouseout="this.style.backgroundColor='';">
+                                <td class="align-middle">
+                                    <span class="badge fs-6"
+                                          style="background: linear-gradient(45deg, #dc3545, #dc3545);
+                                                         padding: 0.5rem 1rem;
+                                                         border-radius: 10px;">
+                                        @app.DaysPending day(s)
+                                    </span>
+                                </td>
+                                <td class="align-middle fw-semibold">@app.JobTitle</td>
+                                <td class="align-middle">@app.ApplicantName</td>
+                                <td class="align-middle">@app.CompanyName</td>
+                                <td class="align-middle">
+                                    <a href="mailto:@app.EmployerEmail"
+                                       style="color: #00B074; text-decoration: none; font-weight: 600;"
+                                       onmouseover="this.style.textDecoration='underline';"
+                                       onmouseout="this.style.textDecoration='none';">
+                                        @app.EmployerEmail
+                                    </a>
+                                </td>
+                                <td class="align-middle">@app.AppliedAt.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 </div>
-
-
-<!-- Results Table -->
-@if (!Model.Any())
-{
-    <div class="alert alert-success mt-4">
-        <h4>No Overdue Applications Found!</h4>
-        <p>There are no applications that have been pending for more than @daysThreshold day(s).</p>
-    </div>
-}
-else
-{
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>Days Pending</th>
-                <th>Job Title</th>
-                <th>Applicant</th>
-                <th>Company (Employer)</th>
-                <th>Employer Contact</th>
-                <th>Applied On</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var app in Model)
-            {
-                <tr>
-                    <td>
-                        <span class="badge bg-danger fs-6">@app.DaysPending day(s)</span>
-                    </td>
-                    <td>@app.JobTitle</td>
-                    <td>@app.ApplicantName</td>
-                    <td>@app.CompanyName</td>
-                    <td>
-                        <a href="mailto:@app.EmployerEmail">@app.EmployerEmail</a>
-                    </td>
-                    <td>@app.AppliedAt.ToString("yyyy-MM-dd")</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
