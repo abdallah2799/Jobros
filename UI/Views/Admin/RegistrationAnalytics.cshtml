@@ -3,38 +3,40 @@
 @{
     ViewData["Title"] = "Registration Analytics";
     var reportDays = ViewData["ReportDays"];
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h1 class="mb-3">Daily Registration Analytics</h1>
-<p class="lead">Showing user registrations over the last @reportDays days.</p>
-<hr />
+<div class="container my-5">
+    <h2 class="mb-2 text-center text-success fw-bold">
+        &#x1F4DD; Daily Registration Analytics
+    </h2>
+   
+    <p class="lead text-center mb-5">Showing user registrations over the last @reportDays days.</p>
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">
-        No user registrations were found in the last @reportDays days.
-    </div>
-}
-else
-{
-    <h4>Raw Data for Charting</h4>
-    <p>This data is ready to be used by a library like Chart.js to create a line or bar chart.</p>
-    
-    <table class="table table-bordered table-striped" style="max-width: 600px;">
-        <thead class="table-dark">
-            <tr>
-                <th>Date</th>
-                <th>New Registrations</th>
-            </tr>
-        </thead>
-        <tbody>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            No user registrations were found in the last @reportDays days.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
             @foreach (var day in Model)
             {
-                <tr>
-                    <td>@day.Date.ToString("dddd, MMMM dd, yyyy")</td>
-                    <td>@day.RegistrationCount</td>
-                </tr>
+                <div class="col-md-4">
+                    <div class="card text-white shadow-sm rounded-4 h-100"
+                         style="background: linear-gradient(135deg, #4e73df, #1cc88a); transition: transform 0.2s;"
+                         onmouseover="this.style.transform='scale(1.05)';"
+                         onmouseout="this.style.transform='scale(1)';">
+                        <div class="card-body text-center p-5">
+                            <i class="fas fa-user-plus fa-2x mb-3"></i>
+                            <h5 class="card-title mb-3">@day.Date.ToString("dddd, MMMM dd, yyyy")</h5>
+                            <p class="card-text fs-2 fw-bold">@day.RegistrationCount</p>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
-}
+        </div>
+    }
+</div>

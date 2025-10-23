@@ -121,26 +121,19 @@ namespace UI.Controllers
                 Console.WriteLine($"✅ Login successful for {user.FullName} ({user.Email}) — Role: {user.Role}");
 
                 // Display success toast
-                TempData["SuccessMessage"] = $"Welcome back, {user.FullName}!";
+                TempData["SuccessMessage"] = $"Welcome back, {user.FullName} ({user.Role}).";
 
                 // Redirect based on role (you can update these when dashboards are ready)
-                //return user.Role switch
-                //{
-                //    "Admin" => RedirectToAction("Dashboard", "Admin"),
-                //    "Employer" => RedirectToAction("Dashboard", "Employer"),
-                //    "JobSeeker" => RedirectToAction("Dashboard", "JobSeeker"),
-                //    _ => RedirectToAction("Index", "Home")
-                //};
+                return user.Role switch
+                {
+                    "Admin" => RedirectToAction("Dashboard", "Admin"),
+                    "Employer" => RedirectToAction("Dashboard", "Employer"),
+                    "JobSeeker" => RedirectToAction("Dashboard", "JobSeeker"),
+                    _ => RedirectToAction("SplashPage", "Home")
+                };
 
-                // Temporary: log successful login info to console for testing
-                Console.WriteLine($"✅ Login successful for {user.FullName} ({user.Email}) — Role: {user.Role}");
-
-                // Option 1: Show message in UI temporarily
-                TempData["SuccessMessage"] = $"Login successful! Welcome, {user.FullName} ({user.Role}).";
-
-                // Redirect to Home for now
-                return RedirectToAction("Index", "Home");
             }
+
             catch (Exception ex)
             {
                 // Log and show error toast

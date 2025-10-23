@@ -240,7 +240,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=SplashPage}/{id?}");
 
 // Health Check Endpoint (visible in /health)
 app.MapHealthChecks("/health", new HealthCheckOptions
