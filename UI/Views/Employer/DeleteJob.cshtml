@@ -1,0 +1,20 @@
+﻿@model Core.DTOs.Job.JobDto
+
+@{
+    ViewData["Title"] = "Delete Job";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-danger fw-bold">❌ Delete Job</h2>
+
+    <div class="alert alert-warning rounded-4">
+        Are you sure you want to delete the job: <strong>@Model.Title</strong>?
+    </div>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger rounded-4">Yes, Delete</button>
+        <a asp-action="Jobs" class="btn btn-outline-secondary rounded-4 ms-2">Cancel</a>
+    </form>
+</div>

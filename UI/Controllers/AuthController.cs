@@ -127,7 +127,7 @@ namespace UI.Controllers
                 return user.Role switch
                 {
                     "Admin" => RedirectToAction("Dashboard", "Admin"),
-                    "Employer" => RedirectToAction("Dashboard", "Employer"),
+                    "Employer" => RedirectToAction("Dashboard", "Employer", new { employerId = user.Id }),
                     "JobSeeker" => RedirectToAction("Dashboard", "JobSeeker"),
                     _ => RedirectToAction("SplashPage", "Home")
                 };

@@ -1,4 +1,4 @@
-@model UI.Models.Employer.CreateJobViewModel
+﻿@model UI.Models.Employer.CreateJobViewModel
 
 @{
     ViewData["Title"] = "Create Job";
@@ -76,19 +76,19 @@
 
 
 
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="submit"
-                            class="btn rounded-4 px-4 shadow-sm"
-                            style="background-color: #00B074; color: white; border: none; transition: 0.3s; margin-right: 20px;">
-                        Create Job
-                    </button>
+            <div class="d-flex justify-content-end mt-4">
+                <button type="submit"
+                        class="btn rounded-4 px-4 shadow-sm"
+                        style="background-color: #00B074; color: white; border: none; transition: 0.3s; margin-right: 20px;">
+                    Create Job
+                </button>
 
-                    <a asp-action="Jobs"
-                       class="btn rounded-4 px-4 shadow-sm"
-                       style="background-color: #007bff; color: white; border: none; transition: 0.3s;">
-                        Cancel
-                    </a>
-                </div>
+                <a asp-action="Jobs"
+                   class="btn rounded-4 px-4 shadow-sm"
+                   style="background-color: #007bff; color: white; border: none; transition: 0.3s;">
+                    Cancel
+                </a>
+            </div>
 
 
         </form>

@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+
+    var Model = new
+    {
+        TotalJobs = 12,
+        ActiveJobs = 8,
+        TotalApplications = 45,
+        PendingApplications = 5,
+        RecentApplications = new[] {
+            new { JobTitle = "Frontend Developer", ApplicantName = "Sara Ahmed", ApplicantEmail = "sara@mail.com", AppliedAt = DateTime.Now.AddDays(-2), Status = "Pending" },
+            new { JobTitle = "Backend Developer", ApplicantName = "Omar Ali", ApplicantEmail = "omar@mail.com", AppliedAt = DateTime.Now.AddDays(-5), Status = "Accepted" },
+            new { JobTitle = "UI/UX Designer", ApplicantName = "Nour Hassan", ApplicantEmail = "nour@mail.com", AppliedAt = DateTime.Now.AddDays(-10), Status = "Rejected" }
+        }
+    };
+}
+
+<div class="container my-5">
+
+    <h2 class="mb-5 text-center fw-bold" style="color: #00B074;">
+        📊 Employer Dashboard
+    </h2>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card text-center shadow border-0 text-white rounded-4 p-4"
+                 style="background: linear-gradient(45deg, #007bff, #0056b3);">
+                <h6>Total Jobs</h6>
+                <h2>@Model.TotalJobs</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow border-0 text-white rounded-4 p-4"
+                 style="background: linear-gradient(45deg, #00B074, #00B074);">
+                <h6>Active Jobs</h6>
+                <h2>@Model.ActiveJobs</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow border-0 text-white rounded-4 p-4"
+                 style="background: linear-gradient(45deg, #17a2b8, #117a8b);">
+                <h6>Total Applications</h6>
+                <h2>@Model.TotalApplications</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center shadow border-0 text-white rounded-4 p-4"
+                 style="background: linear-gradient(45deg, #ffc107, #e0a800);">
+                <h6>Pending Applications</h6>
+                <h2>@Model.PendingApplications</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table of Applications -->
+    <div class="card shadow-sm p-4" style="border-radius: 25px; border: 2px solid #ccc;">
+        <h4 class="mb-4 fw-bold" style="color: #00B074;">
+            <i class="fas fa-file-alt me-2"></i>Recent Applications
+        </h4>
+
+        @if (Model.RecentApplications != null && Model.RecentApplications.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr style="background: linear-gradient(45deg, #00B074, #00B074); color: white;">
+                            <th style="border: none; padding: 1rem;">Job Title</th>
+                            <th style="border: none; padding: 1rem;">Applicant Name</th>
+                            <th style="border: none; padding: 1rem;">Email</th>
+                            <th style="border: none; padding: 1rem;">Applied At</th>
+                            <th style="border: none; padding: 1rem;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var app in Model.RecentApplications)
+                        {
+                            <tr style="transition: background-color 0.2s;"
+                                onmouseover="this.style.backgroundColor='#f0f9f5';"
+                                onmouseout="this.style.backgroundColor='';">
+                                <td class="align-middle fw-semibold">@app.JobTitle</td>
+                                <td class="align-middle">@app.ApplicantName</td>
+                                <td class="align-middle">@app.ApplicantEmail</td>
+                                <td class="align-middle">@app.AppliedAt.ToString("dd/MM/yyyy")</td>
+                                <td class="align-middle">
+                                    @if (app.Status == "Pending")
+                                    {
+                                        <span class="badge fs-6"
+                                              style="background: linear-gradient(45deg, #ffc107, #ffc107);
+                                                                 color: black;
+                                                                 padding: 0.5rem 1rem;
+                                                                 border-radius: 10px;">
+                                            Pending
+                                        </span>
+                                    }
+                                    else if (app.Status == "Accepted")
+                                    {
+                                        <span class="badge fs-6"
+                                              style="background: linear-gradient(45deg, #00B074, #00B074);
+                                                                 padding: 0.5rem 1rem;
+                                                                 border-radius: 10px;">
+                                            Accepted
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge fs-6"
+                                              style="background: linear-gradient(45deg, #dc3545, #dc3545);
+                                                                 padding: 0.5rem 1rem;
+                                                                 border-radius: 10px;">
+                                            Rejected
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-3x mb-3" style="color: #ccc;"></i>
+                <p class="text-muted">No recent applications found</p>
+            </div>
+        }
+    </div>
+</div>

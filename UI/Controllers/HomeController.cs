@@ -17,6 +17,28 @@ namespace UI.Controllers
 
         public IActionResult SplashPage()
         {
+            if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Dashboard", "Admin");
+                }
+                else if (User.IsInRole("Employer"))
+                {
+                    return RedirectToAction("Dashboard", "Employer");
+                }
+                else if (User.IsInRole("JobSeeker"))
+                {
+                    return RedirectToAction("Dashboard", "JobSeeker");
+                }
+                else
+                {
+                    
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
             return View();
         }
 

@@ -8,6 +8,7 @@ using Core.Interfaces.IServices.Commands;
 using Core.Interfaces.IServices.IAdmin;
 using Core.Interfaces.IServices.IAuth;
 using Core.Interfaces.IServices.IEmailServices;
+using Core.Interfaces.IServices.IEmployer;
 using Core.Interfaces.IServices.IQueries;
 using Core.Interfaces.IUnitOfWorks;
 using Core.Interfaces.Services;
@@ -134,6 +135,18 @@ builder.Services.AddScoped<IEmailService, SendGridEmailService>();
 // JobSeeker Services
 builder.Services.AddScoped<IJobSeekerQueryService, JobSeekerService>();
 builder.Services.AddScoped<IJobSeekerCommandService, JobSeekerService>();
+
+builder.Services.AddScoped<IPasswordHasher<Employer>, PasswordHasher<Employer>>();
+
+// Employer Services
+// Register EmployerService for all its interfaces
+builder.Services.AddScoped<IJobService, EmployerService>();
+builder.Services.AddScoped<IProfileService, EmployerService>();
+builder.Services.AddScoped<IApplicationsServices, EmployerService>();
+
+
+
+
 
 // Admin Services
 builder.Services.AddScoped<IAdminService, AdminService>();
