@@ -1,0 +1,56 @@
+@model Core.DTOs.EmployerDTOs.ApplicationDetailsDto
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
+
+@{
+    Layout = "_Layout";
+}
+
+<h2>Application Details</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div>
+    <p><strong>Job:</strong> @Model.JobTitle</p>
+    <p><strong>Applicant:</strong> @Model.ApplicantName</p>
+    <p><strong>Email:</strong> @Model.ApplicantEmail</p>
+    <p><strong>Applied At:</strong> @Model.AppliedAt.ToString("yyyy-MM-dd")</p>
+    <p><strong>Status:</strong> @Model.Status</p>
+    <p><strong>Cover Letter:</strong></p>
+    <p>@Model.CoverLetter</p>
+
+    @if(!string.IsNullOrEmpty(Model.CvFilePath))
+    {
+        var cv = Model.CvFilePath;
+        if (cv.StartsWith("http", System.StringComparison.OrdinalIgnoreCase))
+        {
+            <p><a href="@cv" target="_blank">Download CV</a></p>
+        }
+        else
+        {
+            var physicalPath = System.IO.Path.Combine(Env.WebRootPath ?? string.Empty, cv.TrimStart('/', '\\'));
+            if (System.IO.File.Exists(physicalPath))
+            {
+                <p><a href="@cv" target="_blank">Download CV</a></p>
+            }
+            else
+            {
+                <p class="text-muted">No CV uploaded by this applicant.</p>
+            }
+        }
+    }
+    else
+    {
+        <p class="text-muted">No CV uploaded by this applicant.</p>
+    }
+
+    <a asp-action="AcceptApplication" asp-route-applicationId="@Model.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-success">Accept</a>
+    <a asp-action="RejectApplication" asp-route-applicationId="@Model.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-danger">Reject</a>
+    <a asp-action="Applications" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-secondary">Back</a>
+</div>

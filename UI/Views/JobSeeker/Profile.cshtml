@@ -1,4 +1,5 @@
 ﻿@model UI.Models.JobSeeker.ProfileViewModel
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
 @{
     ViewData["Title"] = "My Profile";
 }
@@ -55,11 +56,27 @@
 
                     <div class="mb-3">
                         <label asp-for="ResumeFile" class="form-label">Upload CV (PDF/DOC/DOCX, max 5MB)</label>
-                        <input asp-for="ResumeFile" type="file" class="form-control" accept=".pdf,.doc,.docx" />
+                        <input asp-for="ResumeFile" type="file" class="form-control" accept=":.pdf,.doc,.docx" />
                         <div class="form-text">
                             @if (!string.IsNullOrEmpty(Model.Profile.ResumeUrl))
                             {
-                                <a href="@Model.Profile.ResumeUrl" target="_blank" class="text-primary">View current CV</a>
+                                var resumeUrl = Model.Profile.ResumeUrl;
+                                if (resumeUrl.StartsWith("http", System.StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <a href="@resumeUrl" target="_blank" class="text-primary">View current CV</a>
+                                }
+                                else
+                                {
+                                    var physicalPath = System.IO.Path.Combine(Env.WebRootPath ?? string.Empty, resumeUrl.TrimStart('/', '\\'));
+                                    if (System.IO.File.Exists(physicalPath))
+                                    {
+                                        <a href="@resumeUrl" target="_blank" class="text-primary">View current CV</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No CV uploaded yet.</span>
+                                    }
+                                }
                             }
                             else
                             {
@@ -78,9 +95,27 @@
                     <img class="img-fluid rounded-circle mb-3" src="~/img/testimonial-1.jpg" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
                     <h5>@Model.Profile.FullName</h5>
                     <p class="text-muted">Job Seeker</p>
-                    @if (!string.IsNullOrEmpty(Model.Profile.ResumeUrl))
-                    {
-                        <a href="@Model.Profile.ResumeUrl" target="_blank" class="btn btn-outline-primary btn-sm">Download CV</a>
+                    @{
+                        if (!string.IsNullOrEmpty(Model.Profile.ResumeUrl))
+                        {
+                            var resumeUrl = Model.Profile.ResumeUrl;
+                            if (resumeUrl.StartsWith("http", System.StringComparison.OrdinalIgnoreCase))
+                            {
+                                <a href="@resumeUrl" target="_blank" class="btn btn-outline-primary btn-sm">Download CV</a>
+                            }
+                            else
+                            {
+                                var physicalPath = System.IO.Path.Combine(Env.WebRootPath ?? string.Empty, resumeUrl.TrimStart('/', '\\'));
+                                if (System.IO.File.Exists(physicalPath))
+                                {
+                                    <a href="@resumeUrl" target="_blank" class="btn btn-outline-primary btn-sm">Download CV</a>
+                                }
+                                else
+                                {
+                                    <div class="text-muted">No CV available.</div>
+                                }
+                            }
+                        }
                     }
                 </div>
 

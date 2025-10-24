@@ -1,0 +1,75 @@
+@model IEnumerable<Core.DTOs.Job.JobDto>
+
+@{
+    Layout = "_Layout";
+    var status = (ViewBag.FilterStatus as string) ?? "";
+}
+
+<h2>My Jobs</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<p>
+    <a asp-action="CreateJob" class="btn btn-primary">Create New Job</a>
+</p>
+
+<form method="get" class="form-inline mb-3">
+    <select name="status" class="form-control mr-2">
+        <option value="">All</option>
+        @if (status == "active")
+        {
+            <option value="active" selected>Active</option>
+        }
+        else
+        {
+            <option value="active">Active</option>
+        }
+
+        @if (status == "inactive")
+        {
+            <option value="inactive" selected>Inactive</option>
+        }
+        else
+        {
+            <option value="inactive">Inactive</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-secondary">Filter</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Created</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var job in Model)
+        {
+            <tr>
+                <td>@job.Title</td>
+                <td>@job.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>@(job.IsActive ? "Active" : "Inactive")</td>
+                <td>
+                    <a asp-action="JobDetails" asp-route-jobId="@job.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="EditJob" asp-route-jobId="@job.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <form asp-action="DeleteJob" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="jobId" value="@job.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this job?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

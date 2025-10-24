@@ -9,6 +9,7 @@ using Core.Interfaces.IUnitOfWorks;
 using Infrastructure.UnitOfWorks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -330,11 +331,19 @@ namespace Application.Services
         {
             try
             {
-                var applications = await _uow.Applications.FindAsync(a =>
-                    a.Job.EmployerId == employerId &&
-                    (string.IsNullOrEmpty(jobTitle) || a.Job.Title.Contains(jobTitle)) &&
-                    (string.IsNullOrEmpty(applicantName) || a.JobSeeker.FullName.Contains(applicantName))
-                );
+                // Use IQueryable and Include to ensure navigation properties are loaded
+                var query = _uow.Applications.AsQueryable()
+                    .Include(a => a.Job)
+                    .Include(a => a.JobSeeker)
+                    .Where(a => a.Job.EmployerId == employerId);
+
+                if (!string.IsNullOrWhiteSpace(jobTitle))
+                    query = query.Where(a => a.Job.Title.Contains(jobTitle));
+
+                if (!string.IsNullOrWhiteSpace(applicantName))
+                    query = query.Where(a => a.JobSeeker.FullName.Contains(applicantName));
+
+                var applications = await query.ToListAsync();
 
                 return applications.Select(a => _mapper.Map<ApplicationsDTo>(a));
             }
@@ -347,12 +356,19 @@ namespace Application.Services
 
         async Task<ApplicationDetailsDto?> IApplicationsServices.GetApplicationDetailsAsync(int applicationId, int employerId)
         {
-            var app = await _uow.Applications.GetByIdAsync(applicationId);
-            if (app == null || app.Job.EmployerId != employerId)
+            // Load the application with related Job and JobSeeker to avoid null navigation properties
+            var app = await _uow.Applications.AsQueryable()
+                        .Include(a => a.Job)
+                        .ThenInclude(j => j.Employer)
+                        .Include(a => a.JobSeeker)
+                        .FirstOrDefaultAsync(a => a.Id == applicationId);
+
+            if (app == null || app.Job == null || app.Job.EmployerId != employerId)
             {
                 _logger.LogWarning("Application {ApplicationId} not found or not owned by employer {EmployerId}.", applicationId, employerId);
                 return null;
             }
+
             return _mapper.Map<ApplicationDetailsDto>(app);
         }
 
@@ -407,8 +423,13 @@ namespace Application.Services
         {
             try
             {
-                var app = await _uow.Applications.GetByIdAsync(applicationId);
-                if (app == null || app.Job.EmployerId != employerId)
+                // Load application with related job and jobseeker to avoid null refs
+                var app = await _uow.Applications.AsQueryable()
+                            .Include(a => a.Job)
+                            .Include(a => a.JobSeeker)
+                            .FirstOrDefaultAsync(a => a.Id == applicationId);
+
+                if (app == null || app.Job == null || app.Job.EmployerId != employerId)
                 {
                     _logger.LogWarning("Application {ApplicationId} not found for Employer {EmployerId}.", applicationId, employerId);
                     return false;
@@ -435,7 +456,7 @@ namespace Application.Services
                     catch (Exception emailEx)
                     {
                         // Log email failure but do not fail the method
-                        _logger.LogWarning(emailEx, "Failed to send email to {Email}.", app.JobSeeker.Email);
+                        _logger.LogWarning(emailEx, "Failed to send email to {Email}.", app.JobSeeker?.Email);
                     }
 
                     return true;

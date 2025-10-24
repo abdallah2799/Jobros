@@ -24,8 +24,7 @@ namespace Core.DTOs.Job
         [StringLength(200, ErrorMessage = "Location can't be longer than 200 characters")]
         public string Location { get; set; }
 
-        [RegularExpression(@"^\d{1,7}-\d{1,7}$",
-            ErrorMessage = "Salary range must be in the format 'min-max', e.g., 5000-10000")]
+        // Removed strict regex to allow flexible salary formats (e.g., "8k - 12k EGP")
         public string SalaryRange { get; set; }
 
         [StringLength(50, ErrorMessage = "Job type can't be longer than 50 characters")]

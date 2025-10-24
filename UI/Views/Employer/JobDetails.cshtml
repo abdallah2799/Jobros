@@ -1,0 +1,53 @@
+@model Core.DTOs.Job.JobDto
+
+@{
+    Layout = "_Layout";
+}
+
+<h2>Job Details</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div>
+    <h3>@Model.Title</h3>
+    <p><strong>Company:</strong> @Model.EmployerName</p>
+    <p><strong>Location:</strong> @Model.Location</p>
+    <p><strong>Salary:</strong> @Model.SalaryRange</p>
+    <p><strong>Type:</strong> @Model.JobType</p>
+    <p>@Model.Description</p>
+    <p><strong>Requirements:</strong> @Model.Requirements</p>
+
+    <a asp-action="EditJob" asp-route-jobId="@Model.Id" class="btn btn-primary">Edit</a>
+    @if (Model.IsActive)
+    {
+        <form asp-action="DeactivateJob" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="jobId" value="@Model.Id" />
+            <button type="submit" class="btn btn-warning">Deactivate</button>
+        </form>
+    }
+    else
+    {
+        <form asp-action="ActivateJob" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="jobId" value="@Model.Id" />
+            <button type="submit" class="btn btn-success">Activate</button>
+        </form>
+    }
+
+    <form asp-action="DeleteJob" method="post" class="d-inline">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="jobId" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this job?');">Delete</button>
+    </form>
+
+    <a asp-action="Applications" asp-route-jobTitle="@Model.Title" class="btn btn-secondary">View Applicants</a>
+    <a asp-action="ExportApplicants" asp-route-jobId="@Model.Id" asp-route-format="excel" class="btn btn-outline-secondary">Export Excel</a>
+</div>

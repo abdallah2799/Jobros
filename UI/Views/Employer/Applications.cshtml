@@ -1,0 +1,41 @@
+@model IEnumerable<Core.DTOs.EmployerDTOs.ApplicationsDTo>
+
+@{
+    Layout = "_Layout";
+}
+
+<h2>Applications</h2>
+<form method="get" class="form-inline mb-3">
+    <input type="hidden" name="employerId" value="@ViewBag.EmployerId" />
+    <input type="text" name="jobTitle" value="@ViewBag.FilterJobTitle" placeholder="Job title" class="form-control mr-2" />
+    <input type="text" name="applicantName" value="@ViewBag.FilterApplicantName" placeholder="Applicant name" class="form-control mr-2" />
+    <button type="submit" class="btn btn-secondary">Filter</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Job</th>
+            <th>Applicant</th>
+            <th>Applied</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var app in Model)
+        {
+            <tr>
+                <td>@app.JobTitle</td>
+                <td>@app.ApplicantName</td>
+                <td>@app.AppliedAt.ToString("yyyy-MM-dd")</td>
+                <td>@app.Status</td>
+                <td>
+                    <a asp-action="ApplicationDetails" asp-route-applicationId="@app.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="AcceptApplication" asp-route-applicationId="@app.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-sm btn-success">Accept</a>
+                    <a asp-action="RejectApplication" asp-route-applicationId="@app.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-sm btn-danger">Reject</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
