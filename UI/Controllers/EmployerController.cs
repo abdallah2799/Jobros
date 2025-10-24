@@ -74,11 +74,23 @@ namespace UI.Controllers
         }
 
         // Employer manages their job 
-        public async Task<IActionResult> Jobs(int employerId)
+        public async Task<IActionResult> Jobs(int employerId, string? status = null)
         {
-            var jobs = await _jobService.GetEmployerJobsAsync(employerId);
+            var jobs = (await _jobService.GetEmployerJobsAsync(employerId)).ToList();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                if (status.Equals("active", StringComparison.OrdinalIgnoreCase))
+                    jobs = jobs.Where(j => j.IsActive).ToList();
+                else if (status.Equals("inactive", StringComparison.OrdinalIgnoreCase))
+                    jobs = jobs.Where(j => !j.IsActive).ToList();
+            }
+
+            ViewBag.EmployerId = employerId;
+            ViewBag.FilterStatus = status;
             return View(jobs);
         }
+
         public async Task<IActionResult> JobDetails(int jobId, int employerId)
         {
             var job = await _jobService.GetJobByIdAsync(jobId, employerId);
@@ -117,7 +129,8 @@ namespace UI.Controllers
                 Requirements = job.Requirements,
                 SalaryRange = job.SalaryRange,
                 JobType = job.JobType,
-                Location = job.Location
+                Location = job.Location,
+                Id = job.Id
             };
 
             ViewBag.JobId = jobId;
@@ -174,6 +187,8 @@ namespace UI.Controllers
         {
             var applications = await _applicationsServices.GetApplicationsByEmployerAsync(employerId, jobTitle, applicantName);
             ViewBag.EmployerId = employerId;
+            ViewBag.FilterJobTitle = jobTitle;
+            ViewBag.FilterApplicantName = applicantName;
             return View(applications);
         }
         public async Task<IActionResult> ApplicationDetails(int applicationId, int employerId)
@@ -199,6 +214,29 @@ namespace UI.Controllers
             return RedirectToAction(nameof(Applications), new { employerId });
         }
 
+        // Export applicants (Excel / PDF) for a specific job
+        public async Task<IActionResult> ExportApplicants(int jobId, int employerId, string format = "excel")
+        {
+            // Ensure employer owns the job
+            if (!_jobService.IsJobOwnedByEmployer(jobId, employerId))
+                return Forbid();
+
+            var bytes = await _applicationsServices.ExportApplicantsAsync(jobId, format);
+            if (bytes == null || bytes.Length == 0)
+                return NotFound();
+
+            var contentType = format.ToLower() == "pdf" ? "application/pdf" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            var ext = format.ToLower() == "pdf" ? "pdf" : "xlsx";
+            var fileName = $"Applicants_{jobId}_{DateTime.UtcNow:yyyyMMddHHmmss}.{ext}";
+            return File(bytes, contentType, fileName);
+        }
+
+        // Job analytics / stats
+        public async Task<IActionResult> JobStats(int jobId, int employerId)
+        {
+            var stats = await _jobService.GetJobAnalyticsAsync(jobId, employerId);
+            return View(stats);
+        }
 
 
     }

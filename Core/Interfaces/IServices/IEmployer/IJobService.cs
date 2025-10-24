@@ -1,4 +1,5 @@
-﻿using Core.DTOs.Job;
+﻿using Core.DTOs.EmployerDTOs;
+using Core.DTOs.Job;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,9 @@ namespace Core.Interfaces.IServices.IEmployer
         Task<bool> ActivateJobAsync(int jobId, int employerId);
         Task<bool> DeactivateJobAsync(int jobId, int employerId);
         bool IsJobOwnedByEmployer(int jobId, int employerId);
+
+        // Use fully qualified type to avoid ambiguity between JobAnalyticsDto classes
+        Task<Core.DTOs.EmployerDTOs.JobAnalyticsDto> GetJobAnalyticsAsync(int jobId, int employerId);
 
     }
 }

@@ -14,5 +14,6 @@ namespace Core.Interfaces.IServices.IEmployer
         Task<ApplicationDetailsDto?> GetApplicationDetailsAsync(int applicationId, int employerId);
         Task<bool> AcceptApplicationAsync(int applicationId, int employerId);
         Task<bool> RejectApplicationAsync(int applicationId, int employerId);
+        Task<byte[]> ExportApplicantsAsync(int jobId, string format);
     }
 }

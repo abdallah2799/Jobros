@@ -120,6 +120,9 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // Auth Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Register password hasher for Employer (EmployerService depends on IPasswordHasher<Employer>)
+builder.Services.AddScoped<Microsoft.AspNetCore.Identity.IPasswordHasher<Core.Entities.Employer>, Microsoft.AspNetCore.Identity.PasswordHasher<Core.Entities.Employer>>();
+
 // Email (SendGrid)
 builder.Services.AddSendGrid(options =>
 {
@@ -134,6 +137,11 @@ builder.Services.AddScoped<IJobSeekerCommandService, JobSeekerService>();
 
 // Admin Services
 builder.Services.AddScoped<IAdminService, AdminService>();
+
+// Employer Services: register EmployerService for its interfaces
+builder.Services.AddScoped<Core.Interfaces.IServices.IEmployer.IJobService, EmployerService>();
+builder.Services.AddScoped<Core.Interfaces.IServices.IEmployer.IProfileService, EmployerService>();
+builder.Services.AddScoped<Core.Interfaces.IServices.IEmployer.IApplicationsServices, EmployerService>();
 
 // AutoMapper Configuration
 builder.Services.AddAutoMapper(op => op.AddProfile(typeof(MappingProfile)));
