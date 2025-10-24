@@ -27,8 +27,7 @@ namespace Core.DTOs.Job
 
         [Required(ErrorMessage = "Salary range is required")]
         [StringLength(50, ErrorMessage = "Salary range can't be longer than 50 characters")]
-        [RegularExpression(@"^\d{1,7}-\d{1,7}$",
-        ErrorMessage = "Salary range must be in the format 'min-max', e.g., 5000-10000")]
+        // Removed strict regex to allow flexible salary formats (e.g., "8k - 12k EGP")
         public string SalaryRange { get; set; }
 
         [Required(ErrorMessage = "Job type is required")]
@@ -37,7 +36,6 @@ namespace Core.DTOs.Job
 
         public bool IsActive { get; set; } = true; 
 
-        [Required(ErrorMessage = "EmployerId is required")]
         public int EmployerId { get; set; }
 
         public int CategoryId { get; set; }

@@ -1,0 +1,26 @@
+@model UI.Models.Employer.EmployerProfileViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<h2>Employer Profile</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div>
+    <h3>@Model.Profile.CompanyName (@Model.Profile.FullName)</h3>
+    <p><strong>Industry:</strong> @Model.Profile.Industry</p>
+    <p><strong>Website:</strong> @Model.Profile.Website</p>
+    <p><strong>Location:</strong> @Model.Profile.Location</p>
+    <p>@Model.Profile.Description</p>
+    <a asp-action="EditProfile" class="btn btn-primary">Edit Profile</a>
+    <a asp-action="ChangePassword" class="btn btn-secondary">Change Password</a>
+</div>

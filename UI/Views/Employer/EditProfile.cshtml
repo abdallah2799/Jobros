@@ -1,0 +1,42 @@
+@model UI.Models.Employer.EditEmployerProfileViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<h2>Edit Employer Profile</h2>
+
+<form asp-action="EditProfile" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="EmployerId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Profile.FullName"></label>
+        <input asp-for="Profile.FullName" class="form-control" />
+        <span asp-validation-for="Profile.FullName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Profile.CompanyName"></label>
+        <input asp-for="Profile.CompanyName" class="form-control" />
+        <span asp-validation-for="Profile.CompanyName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Profile.Industry"></label>
+        <input asp-for="Profile.Industry" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Profile.Website"></label>
+        <input asp-for="Profile.Website" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Profile.Location"></label>
+        <input asp-for="Profile.Location" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Profile.Description"></label>
+        <textarea asp-for="Profile.Description" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Profile" class="btn btn-secondary">Cancel</a>
+</form>
