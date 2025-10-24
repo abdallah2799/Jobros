@@ -1,0 +1,7 @@
+﻿<div class="d-flex vh-100">
+    @await Html.PartialAsync("_ProfileSidebarPartial")
+
+    <div class="flex-grow-1 p-4 overflow-auto">
+        @RenderBody()
+    </div>
+</div>

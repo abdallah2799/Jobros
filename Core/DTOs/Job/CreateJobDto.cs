@@ -25,6 +25,11 @@ namespace Core.DTOs.Job
         [StringLength(200, ErrorMessage = "Location can't be longer than 200 characters")]
         public string Location { get; set; }
 
+        [Required(ErrorMessage = "Company name is required")]
+        [StringLength(100, ErrorMessage = "Company name can't be longer than 100 characters")]
+        public string CompanyName { get; set; }
+
+
         [Required(ErrorMessage = "Salary range is required")]
         [StringLength(50, ErrorMessage = "Salary range can't be longer than 50 characters")]
         // Removed strict regex to allow flexible salary formats (e.g., "8k - 12k EGP")

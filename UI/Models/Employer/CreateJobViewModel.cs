@@ -9,5 +9,8 @@ namespace UI.Models.Employer
         public int EmployerId { get; set; }
         public CreateJobDto Job { get; set; } = new CreateJobDto();
         public IEnumerable<SelectListItem> Categories { get; set; } = new List<SelectListItem>();
+
+        public string CompanyName { get; set; }
+
     }
 }

@@ -1,0 +1,58 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Core.Entities
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var roles = await UserManager.GetRolesAsync(user);
+    var isEmployer = roles.Contains("Employer");
+
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light shadow-sm" style="width: 250px; height: 100vh;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+        <span class="fs-4 fw-bold text-success">Profile Panel</span>
+    </a>
+    <hr />
+
+    <ul class="nav nav-pills flex-column mb-auto">
+        @if (isEmployer)
+        {
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("Profile", "Employer")"
+                   class="nav-link @(currentAction=="Profile" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    👤 View Profile
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("EditProfile", "Employer")"
+                   class="nav-link @(currentAction=="EditProfile" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    ✏️ Edit Profile
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("ChangePassword", "Employer")"
+                   class="nav-link @(currentAction=="ChangePassword" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    🔑 Change Password
+                </a>
+            </li>
+        }
+    </ul>
+
+    <div class="mt-auto">
+        <hr />
+        <form method="post" asp-controller="Home" asp-action="Index" class="mb-2">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn w-100 rounded-4 shadow-sm btn-outline-success">
+                🏠 Back to Home
+            </button>
+        </form>
+        <form method="post" asp-controller="Auth" asp-action="Logout">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn w-100 rounded-4 shadow-sm btn-outline-success">
+                🔓 Log Out
+            </button>
+        </form>
+    </div>
+</div>

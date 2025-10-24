@@ -1,53 +1,128 @@
 @model Core.DTOs.Job.JobDto
 
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = "Job Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h2>Job Details</h2>
+<div class="container my-5">
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
+    <div class="card shadow-lg border-0 rounded-4 p-5" style="max-width: 850px; margin: 0 auto; background-color: #ffffff;">
 
-<div>
-    <h3>@Model.Title</h3>
-    <p><strong>Company:</strong> @Model.EmployerName</p>
-    <p><strong>Location:</strong> @Model.Location</p>
-    <p><strong>Salary:</strong> @Model.SalaryRange</p>
-    <p><strong>Type:</strong> @Model.JobType</p>
-    <p>@Model.Description</p>
-    <p><strong>Requirements:</strong> @Model.Requirements</p>
+        <!-- Job Title -->
+        <h2 class="mb-4 text-center fw-bold" style="color: #00B074;">
+            <i class="fa-solid fa-briefcase me-2"></i> @Model.Title
+        </h2>
 
-    <a asp-action="EditJob" asp-route-jobId="@Model.Id" class="btn btn-primary">Edit</a>
-    @if (Model.IsActive)
-    {
-        <form asp-action="DeactivateJob" method="post" class="d-inline">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="jobId" value="@Model.Id" />
-            <button type="submit" class="btn btn-warning">Deactivate</button>
-        </form>
-    }
-    else
-    {
-        <form asp-action="ActivateJob" method="post" class="d-inline">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="jobId" value="@Model.Id" />
-            <button type="submit" class="btn btn-success">Activate</button>
-        </form>
-    }
+        <!-- Company and Info -->
+        <div class="text-center mb-4">
+            <p class="fs-5 mb-2">
+                <i class="fa-solid fa-building me-2 text-success"></i>
+                <strong>Company:</strong> @Model.EmployerName
+            </p>
+            <p class="text-muted mb-1">
+                <i class="fa-solid fa-location-dot me-2 text-secondary"></i>
+                <strong>Location:</strong> @Model.Location
+            </p>
+            <p class="text-muted mb-1">
+                <i class="fa-solid fa-sack-dollar me-2 text-secondary"></i>
+                <strong>Salary:</strong> @Model.SalaryRange
+            </p>
+            <p class="text-muted mb-1">
+                <i class="fa-solid fa-clock me-2 text-secondary"></i>
+                <strong>Type:</strong> @Model.JobType
+            </p>
+            <p class="text-muted mb-0">
+                <i class="fa-regular fa-calendar-days me-2 text-secondary"></i>
+                <strong>Posted on:</strong> @Model.CreatedAt.ToString("dd MMM yyyy")
+            </p>
+        </div>
 
-    <form asp-action="DeleteJob" method="post" class="d-inline">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="jobId" value="@Model.Id" />
-        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this job?');">Delete</button>
-    </form>
+        <hr />
 
-    <a asp-action="Applications" asp-route-jobTitle="@Model.Title" class="btn btn-secondary">View Applicants</a>
-    <a asp-action="ExportApplicants" asp-route-jobId="@Model.Id" asp-route-format="excel" class="btn btn-outline-secondary">Export Excel</a>
+        <!-- Description -->
+        <div class="mb-4">
+            <h5 class="fw-bold text-secondary mb-2">
+                <i class="fa-solid fa-align-left me-2 text-success"></i> Description
+            </h5>
+            <p class="text-muted">@Model.Description</p>
+        </div>
+
+        <!-- Requirements -->
+        <div class="mb-4">
+            <h5 class="fw-bold text-secondary mb-2">
+                <i class="fa-solid fa-list-check me-2 text-success"></i> Requirements
+            </h5>
+            <p class="text-muted">@Model.Requirements</p>
+        </div>
+
+        <hr />
+
+        <!-- Action Buttons -->
+        <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+
+            <!-- Edit Button -->
+            <a asp-action="EditJob" asp-route-jobId="@Model.Id"
+               class="btn btn-primary text-white rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="fa-solid fa-pen-to-square me-2"></i> Edit
+            </a>
+
+            <!-- Activate / Deactivate Button -->
+            @if (Model.IsActive)
+            {
+                <form asp-action="DeactivateJob" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="jobId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-warning text-white rounded-pill px-4 fw-semibold shadow-sm">
+                        <i class="fa-solid fa-lock me-2"></i> Deactivate
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form asp-action="ActivateJob" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="jobId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-success text-white rounded-pill px-4 fw-semibold shadow-sm">
+                        <i class="fa-solid fa-unlock me-2"></i> Activate
+                    </button>
+                </form>
+            }
+
+            <!-- Delete Button -->
+            <form asp-action="DeleteJob" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="jobId" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm"
+                        onclick="return confirm('Are you sure you want to delete this job?');">
+                    <i class="fa-solid fa-trash-can me-2"></i> Delete
+                </button>
+            </form>
+
+            <!-- View Applicants -->
+            <a asp-action="Applications" asp-route-jobTitle="@Model.Title"
+               class="btn btn-info text-white rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="fa-solid fa-users me-2"></i> View Applicants
+            </a>
+
+            <!-- Export Excel -->
+            <a asp-action="ExportApplicants" asp-route-jobId="@Model.Id" asp-route-format="excel"
+               class="btn btn-success text-white rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="fa-solid fa-file-excel me-2"></i> Export Excel
+            </a>
+
+        </div>
+
+
+        <hr class="mt-4" />
+
+        <!-- Back Button -->
+        <div class="text-center mt-3">
+            <a asp-action="Jobs"
+               class="btn btn-outline-dark rounded-pill px-4 py-2 shadow-sm fw-semibold">
+                <i class="fa-solid fa-arrow-left me-2"></i> Back to My Jobs
+            </a>
+        </div>
+
+    </div>
 </div>

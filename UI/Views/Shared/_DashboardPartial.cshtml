@@ -3,75 +3,109 @@
 @inject UserManager<ApplicationUser> UserManager
 
 @{
+    var user = await UserManager.GetUserAsync(User);
+    var roles = await UserManager.GetRolesAsync(user);
+    var isAdmin = roles.Contains("Admin");
+    var isEmployer = roles.Contains("Employer");
+    var isJobSeeker = roles.Contains("JobSeeker");
+
     var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
 }
 
-<div class="d-flex vh-100">
-    <!-- Sidebar -->
-    <div class="d-flex flex-column flex-shrink-0 p-3 bg-light shadow-sm" style="width: 250px;">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
-            <span class="fs-4 fw-bold text-success">Admin Panel</span>
-        </a>
-        <hr />
-        <ul class="nav nav-pills flex-column mb-auto">
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light shadow-sm" style="width: 250px; height: 100vh;">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+        <span class="fs-4 fw-bold text-success">
+            @(isAdmin ? "Admin Panel" : isEmployer ? "Employer Panel" : "Job Seeker Panel")
+        </span>
+    </a>
+    <hr />
+
+    <ul class="nav nav-pills flex-column mb-auto">
+        @if (isAdmin)
+        {
             <li class="nav-item mb-2">
                 <a href="@Url.Action("Dashboard", "Admin")"
-                   class="nav-link d-flex align-items-center justify-content-between
-                   @(currentAction=="Dashboard" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                   class="nav-link @(currentAction=="Dashboard" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
                     📊 Dashboard
                 </a>
             </li>
             <li class="nav-item mb-2">
-                <a href="@Url.Action("RegistrationAnalytics", "Admin")"
-                   class="nav-link d-flex align-items-center justify-content-between
-                   @(currentAction=="RegistrationAnalytics" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
-                    📝 Daily Registrations
-                </a>
-            </li>
-            <li class="nav-item mb-2">
                 <a href="@Url.Action("JobOversight", "Admin")"
-                   class="nav-link d-flex align-items-center justify-content-between
-                   @(currentAction=="JobOversight" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                   class="nav-link @(currentAction=="JobOversight" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
                     💼 Jobs
                 </a>
             </li>
             <li class="nav-item mb-2">
                 <a href="@Url.Action("OverdueApplications", "Admin")"
-                   class="nav-link d-flex align-items-center justify-content-between
-                   @(currentAction=="OverdueApplications" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                   class="nav-link @(currentAction=="OverdueApplications" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
                     📄 Applications
                 </a>
             </li>
             <li class="nav-item mb-2">
                 <a href="@Url.Action("Announcements", "Admin")"
-                   class="nav-link d-flex align-items-center justify-content-between
-                   @(currentAction=="Announcements" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                   class="nav-link @(currentAction=="Announcements" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
                     📣 Announcements
                 </a>
             </li>
-        </ul>
-    
+        }
+        else if (isEmployer)
+        {
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("Dashboard", "Employer")"
+                   class="nav-link @(currentAction=="Dashboard" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    📊 Dashboard
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("Jobs", "Employer")"
+                   class="nav-link @(currentAction=="Jobs" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    💼 Jobs
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("Applications", "Employer")"
+                   class="nav-link @(currentAction=="Applications" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    📄 Applications
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("CreateJob", "Employer")"
+                   class="nav-link @(currentAction=="CreateJob" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    <i class="fas fa-plus-circle me-2"></i> Create Job
+                </a>
+            </li>
+        }
+        else if (isJobSeeker)
+        {
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("BrowseJobs", "JobSeeker")"
+                   class="nav-link @(currentAction=="BrowseJobs" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    💼 Browse Jobs
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="@Url.Action("MyApplications", "JobSeeker")"
+                   class="nav-link @(currentAction=="MyApplications" ? "active bg-success text-white" : "link-dark") rounded-4 px-3 py-2 shadow-sm">
+                    📄 My Applications
+                </a>
+            </li>
+        }
+    </ul>
 
-        <div class="mt-auto">
-            <hr />
-
-            <form method="post" asp-controller="Home" asp-action="Index">
-                    @Html.AntiForgeryToken()
-                <button type="submit" class="btn w-100 rounded-4 shadow-sm btn-outline-success mb-2">
-                        🏠 Back to Home
-                    </button>
-                </form>
-            
-            <form method="post" asp-controller="Auth" asp-action="Logout">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn w-100 rounded-4 shadow-sm btn-outline-success">
-                    🔓 Log Out
-                </button>
-            </form>
-        </div>
-
-        
+    <!-- Footer buttons -->
+    <div class="mt-auto">
+        <hr />
+        <form method="post" asp-controller="Home" asp-action="Index" class="mb-2">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn w-100 rounded-4 shadow-sm btn-outline-success">
+                🏠 Back to Home
+            </button>
+        </form>
+        <form method="post" asp-controller="Auth" asp-action="Logout">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn w-100 rounded-4 shadow-sm btn-outline-success">
+                🔓 Log Out
+            </button>
+        </form>
     </div>
-
-   
 </div>

@@ -1,45 +1,76 @@
 @model UI.Models.Employer.EditJobViewModel
 
 @{
-    Layout = "_Layout";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Edit Job";
 }
 
-<h2>Edit Job</h2>
+<div class="container my-5">
 
-<form asp-action="EditJob" method="post">
-    @Html.AntiForgeryToken()
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <input type="hidden" asp-for="EmployerId" />
-    <input type="hidden" asp-for="JobId" />
-    <input type="hidden" asp-for="Job.Id" />
+    <!-- Edit Form -->
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+            <h4 class="fw-bold mb-4 text-secondary">
+                <i class="bi bi-pencil-square me-2 text-success"></i> Edit Job Details
+            </h4>
 
-    <div class="form-group">
-        <label asp-for="Job.Title"></label>
-        <input asp-for="Job.Title" class="form-control" />
-        <span asp-validation-for="Job.Title" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Job.Description"></label>
-        <textarea asp-for="Job.Description" class="form-control"></textarea>
-    </div>
-    <div class="form-group">
-        <label asp-for="Job.Requirements"></label>
-        <textarea asp-for="Job.Requirements" class="form-control"></textarea>
-    </div>
-    <div class="form-group">
-        <label asp-for="Job.Location"></label>
-        <input asp-for="Job.Location" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Job.SalaryRange"></label>
-        <input asp-for="Job.SalaryRange" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Job.JobType"></label>
-        <input asp-for="Job.JobType" class="form-control" />
-    </div>
+            <form asp-action="EditJob" method="post" class="needs-validation">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="JobDetails" asp-route-jobId="@Model.JobId">Cancel</a>
-</form>
+                <input type="hidden" asp-for="EmployerId" />
+                <input type="hidden" asp-for="JobId" />
+                <input type="hidden" asp-for="Job.Id" />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Job.Title" class="form-label fw-semibold"></label>
+                        <input asp-for="Job.Title" class="form-control" placeholder="Enter job title..." />
+                        <span asp-validation-for="Job.Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Job.JobType" class="form-label fw-semibold"></label>
+                        <input asp-for="Job.JobType" class="form-control" placeholder="Full-time, Part-time..." />
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Job.Description" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Job.Description" rows="3" class="form-control" placeholder="Enter job description..."></textarea>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Job.Requirements" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Job.Requirements" rows="3" class="form-control" placeholder="Enter job requirements..."></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Job.Location" class="form-label fw-semibold"></label>
+                        <input asp-for="Job.Location" class="form-control" placeholder="Enter location..." />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Job.SalaryRange" class="form-label fw-semibold"></label>
+                        <input asp-for="Job.SalaryRange" class="form-control" placeholder="e.g. 10k - 15k EGP" />
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Jobs" asp-route-jobId="@Model.JobId"
+                       class="btn btn-outline-dark rounded-pill px-4 fw-semibold">
+                        <i class="bi bi-arrow-left me-1"></i> Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-success rounded-pill px-5 fw-semibold shadow-sm">
+                        <i class="bi bi-save me-2"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

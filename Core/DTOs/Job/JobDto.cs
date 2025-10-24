@@ -10,7 +10,9 @@ namespace Core.DTOs.Job
         public string SalaryRange { get; set; }
         public string JobType { get; set; }
         public bool IsActive { get; set; }
+        public int EmployerId { get; set; }
         public string EmployerName { get; set; }
+        public string CompanyName { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

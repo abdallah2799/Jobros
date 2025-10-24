@@ -1,56 +1,78 @@
 @model Core.DTOs.EmployerDTOs.ApplicationDetailsDto
-@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
 
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = "Application Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h2>Application Details</h2>
+<div class="container my-5">
+    <h2 class="mb-4 fw-bold text-center" style="color:#00B074;">
+        <i class="bi bi-file-earmark-text me-2"></i> Application Details
+    </h2>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
+    <div class="card shadow-sm p-4 rounded">
+        <dl class="row">
+            <dt class="col-sm-3">Job Title</dt>
+            <dd class="col-sm-9">@Model.JobTitle</dd>
 
-<div>
-    <p><strong>Job:</strong> @Model.JobTitle</p>
-    <p><strong>Applicant:</strong> @Model.ApplicantName</p>
-    <p><strong>Email:</strong> @Model.ApplicantEmail</p>
-    <p><strong>Applied At:</strong> @Model.AppliedAt.ToString("yyyy-MM-dd")</p>
-    <p><strong>Status:</strong> @Model.Status</p>
-    <p><strong>Cover Letter:</strong></p>
-    <p>@Model.CoverLetter</p>
+            <dt class="col-sm-3">Applicant Name</dt>
+            <dd class="col-sm-9">@Model.ApplicantName</dd>
 
-    @if(!string.IsNullOrEmpty(Model.CvFilePath))
-    {
-        var cv = Model.CvFilePath;
-        if (cv.StartsWith("http", System.StringComparison.OrdinalIgnoreCase))
-        {
-            <p><a href="@cv" target="_blank">Download CV</a></p>
-        }
-        else
-        {
-            var physicalPath = System.IO.Path.Combine(Env.WebRootPath ?? string.Empty, cv.TrimStart('/', '\\'));
-            if (System.IO.File.Exists(physicalPath))
-            {
-                <p><a href="@cv" target="_blank">Download CV</a></p>
-            }
-            else
-            {
-                <p class="text-muted">No CV uploaded by this applicant.</p>
-            }
-        }
-    }
-    else
-    {
-        <p class="text-muted">No CV uploaded by this applicant.</p>
-    }
+            <dt class="col-sm-3">Applicant Email</dt>
+            <dd class="col-sm-9">@Model.ApplicantEmail</dd>
 
-    <a asp-action="AcceptApplication" asp-route-applicationId="@Model.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-success">Accept</a>
-    <a asp-action="RejectApplication" asp-route-applicationId="@Model.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-danger">Reject</a>
-    <a asp-action="Applications" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-secondary">Back</a>
+            <dt class="col-sm-3">Applied At</dt>
+            <dd class="col-sm-9">@Model.AppliedAt.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-3">Status</dt>
+            <dd class="col-sm-9">
+                <span class="badge @(Model.Status=="Accepted" ? "bg-success" : Model.Status=="Rejected" ? "bg-danger" : "bg-warning text-dark")">
+                    @Model.Status
+                </span>
+            </dd>
+
+            <dt class="col-sm-3">Cover Letter</dt>
+            <dd class="col-sm-9">@Model.CoverLetter</dd>
+
+            <dt class="col-sm-3">CV</dt>
+            <dd class="col-sm-9">
+                @if (!string.IsNullOrEmpty(Model.CvFilePath))
+                {
+                    <a asp-action="DownloadCv" asp-route-applicationId="@Model.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-sm btn-primary">
+                        <i class="bi bi-download me-1"></i> Download CV
+                    </a>
+                }
+                else
+                {
+                    <span class="text-muted">No CV uploaded</span>
+                }
+            </dd>
+        </dl>
+
+        <div class="mt-4 d-flex justify-content-between">
+            <a asp-action="Applications" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left-circle me-1"></i> Back
+            </a>
+
+            <div class="d-flex gap-2">
+                <form asp-action="AcceptApplication" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="applicationId" value="@Model.Id" />
+                    <input type="hidden" name="employerId" value="@ViewBag.EmployerId" />
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg me-1"></i> Accept
+                    </button>
+                </form>
+
+                <form asp-action="RejectApplication" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="applicationId" value="@Model.Id" />
+                    <input type="hidden" name="employerId" value="@ViewBag.EmployerId" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-lg me-1"></i> Reject
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
