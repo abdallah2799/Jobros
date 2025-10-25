@@ -7,10 +7,12 @@ using Core.Interfaces.IServices.Commands;
 using Core.Interfaces.IServices.IEmailServices;
 using Core.Interfaces.IServices.IQueries;
 using Core.Interfaces.IUnitOfWorks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Application.Services
@@ -28,6 +30,40 @@ namespace Application.Services
             _mapper = mapper;
             _userManager = userManager;
             _emailService = emailService;
+        }
+
+        public async Task<JobSeekerDashboardStatsDto> GetDashboardsatsAsync(int jobSeekerId)
+        {
+            //var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //if( string.IsNullOrEmpty(userId) || !int.TryParse(userId, out var jobSeekerId))
+            //{
+            //    throw new UnauthorizedAccessException("User is not authenticated or invalid JobSeeker ID.");
+            //}
+            var applications = await _uow.Applications.AsQueryable().Where(a => a.JobSeekerId == jobSeekerId)
+                .ToListAsync();
+
+            var total = applications.Count;
+            var accepted = applications.Count(a => a.Status.Equals("Accepted", StringComparison.OrdinalIgnoreCase));
+            var rejected = applications.Count(a => a.Status.Equals("Rejected", StringComparison.OrdinalIgnoreCase));
+            var pending = applications.Count(a => a.Status.Equals("Pending", StringComparison.OrdinalIgnoreCase));
+
+
+            return new JobSeekerDashboardStatsDto
+            {
+                TopAppliedJobTitle = (await _uow.Applications
+                .AsQueryable()
+                .Include(a => a.Job)
+                .Where(a => a.Status == "Pending")
+                .GroupBy(a => a.Job.Title)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefaultAsync())?? " No pending applications in the system ",
+                TotalJobsAppliedFor = total,
+                AcceptedApplications = accepted,
+                RejectedApplications = rejected,
+                PendingApplications = pending,
+            };
+
         }
 
         public async Task<IEnumerable<JobDto>> GetActiveJobsAsync(string? keyword = null, int? categoryId = null, string? employerName = null, string? location = null, string? jobType = null, int page = 1, int pageSize = 10)

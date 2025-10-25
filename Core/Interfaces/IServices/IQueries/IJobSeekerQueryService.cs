@@ -8,6 +8,8 @@ namespace Core.Interfaces.IServices.IQueries
 {
     public interface IJobSeekerQueryService
     {
+        Task<JobSeekerDashboardStatsDto> GetDashboardsatsAsync(int jobSeekerId);
+
         Task<IEnumerable<JobDto>> GetActiveJobsAsync(
             string? keyword = null,
             int? categoryId = null,

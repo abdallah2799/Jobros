@@ -9,6 +9,7 @@ namespace Core.Interfaces.IServices.IEmployer
 {
     public interface IProfileService
     {
+        Task<EmployerDashboardStatsDto> GetDashboardStatsAsync(int employerId);
         Task<EmployerProfileDto?> GetProfileAsync(int employerId);
         Task<bool> UpdateProfileAsync(int employerId, EditEmployerProfileDto model);
         Task<bool> ChangePasswordAsync(int employerId, ChangePasswordDto model);

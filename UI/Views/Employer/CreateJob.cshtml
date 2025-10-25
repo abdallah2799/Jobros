@@ -41,23 +41,28 @@
             <div class="mb-3">
                 <label asp-for="Job.Requirements" class="form-label fw-semibold text-secondary"></label>
                 <textarea asp-for="Job.Requirements" class="form-control rounded-3 shadow-sm" rows="3" placeholder="List job requirements..."></textarea>
+                <span asp-validation-for="Job.Requirements" class="text-danger"></span>
+
             </div>
 
-            <div class="mb-3">
+            @* <div class="mb-3">
                 <label asp-for="Job.CompanyName" class="form-label fw-semibold text-secondary"></label>
                 <input asp-for="Job.CompanyName" class="form-control rounded-3 shadow-sm" placeholder="Enter your company name..." />
                 <span asp-validation-for="Job.CompanyName" class="text-danger"></span>
-            </div>
+            </div> *@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label asp-for="Job.Location" class="form-label fw-semibold text-secondary"></label>
                     <input asp-for="Job.Location" class="form-control rounded-3 shadow-sm" placeholder="e.g. Cairo, Egypt" />
+                    <span asp-validation-for="Job.Location" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label asp-for="Job.SalaryRange" class="form-label fw-semibold text-secondary"></label>
                     <input asp-for="Job.SalaryRange" class="form-control rounded-3 shadow-sm" placeholder="e.g. 5000-10000" />
+                    <span asp-validation-for="Job.SalaryRange" class="text-danger"></span>
+
                 </div>
             </div>
 
@@ -65,11 +70,21 @@
                 <div class="col-md-6 mb-3">
                     <label asp-for="Job.JobType" class="form-label fw-semibold text-secondary"></label>
                     <input asp-for="Job.JobType" class="form-control rounded-3 shadow-sm" placeholder="e.g. Full-time, Part-time" />
+                    <span asp-validation-for="Job.JobType" class="text-danger"></span>
+
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label asp-for="Job.CategoryId" class="form-label fw-semibold text-secondary">Category</label>
-                    <select asp-for="Job.CategoryId" asp-items="Model.Categories" class="form-select rounded-3 shadow-sm"></select>
+                    <select asp-for="Job.CategoryId" class="form-select rounded-3 shadow-sm">
+                        <option value="0">Select a category</option>
+                        @foreach( var category in Model.Categories)
+                        {
+                            <option value="@category.Value" > @category.Text </option>
+                        }
+                    </select>
+                    <span asp-validation-for="Job.CategoryId" class="text-danger"></span>
+
                 </div>
             </div>
 

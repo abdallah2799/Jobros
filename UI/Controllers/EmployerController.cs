@@ -9,6 +9,7 @@ using Core.Interfaces.IUnitOfWorks;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System;
+using Application.Services;
 
 namespace UI.Controllers
 {
@@ -37,6 +38,16 @@ namespace UI.Controllers
             if (int.TryParse(idClaim, out var id))
                 return id;
             throw new InvalidOperationException("Unable to determine current user id.");
+        }
+
+        // Dashboard
+
+        [HttpGet]
+        public async Task<IActionResult> Dashboard()
+        { 
+            var employerId = GetCurrentUserId();
+            var stats = await _profileService.GetDashboardStatsAsync(employerId);
+            return View(stats);
         }
 
         // Employer profile management
@@ -176,29 +187,37 @@ namespace UI.Controllers
             var cats = _uow.Categories.AsQueryable().OrderBy(c => c.Name).Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem { Text = c.Name, Value = c.Id.ToString() }).ToList();
             vm.Categories = cats;
 
+            if (vm.Job.CategoryId == 0)
+            {
+                TempData["ErrorMessage"] = "Please fix validation errors.";
+                ModelState.AddModelError("Job.CategoryId", "Please select a category.");
+                return View(vm);
+
+            }
+
             if (!ModelState.IsValid)
             {
                 TempData["ErrorMessage"] = "Please fix validation errors.";
                 return View(vm);
             }
 
-            // validate selected category exists using async repository method
-            if (vm.Job.CategoryId != 0)
-            {
-                var cat = await _uow.Categories.GetByIdAsync(vm.Job.CategoryId);
-                if (cat == null)
-                {
-                    ModelState.AddModelError("Job.CategoryId", "Selected category does not exist.");
-                    TempData["ErrorMessage"] = "Selected category does not exist.";
-                    return View(vm);
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("Job.CategoryId", "Please select a category.");
-                TempData["ErrorMessage"] = "Please select a category.";
-                return View(vm);
-            }
+            //// validate selected category exists using async repository method
+            //if (vm.Job.CategoryId <= 0)
+            //{
+            //    var cat = await _uow.Categories.GetByIdAsync(vm.Job.CategoryId);
+            //    if (cat == null)
+            //    {
+            //        ModelState.AddModelError("Job.CategoryId", "Selected category does not exist.");
+            //        TempData["ErrorMessage"] = "Selected category does not exist.";
+            //        return View(vm);
+            //    }
+            //}
+            //else
+            //{
+            //    ModelState.AddModelError("Job.CategoryId", "Please select a category.");
+            //    TempData["ErrorMessage"] = "Please select a category.";
+            //    return View(vm);
+            //}
 
             vm.Job.EmployerId = id; // ensure model has correct owner
 
@@ -320,6 +339,36 @@ namespace UI.Controllers
 
             ViewBag.EmployerId = id;
             return View(application);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AcceptApplication(int applicationId)
+        {
+            var isAccepted = await _applicationsServices.AcceptApplicationAsync(applicationId, GetCurrentUserId());
+            if (!isAccepted)
+            {
+                TempData["ErrorMessage"] = "Failed to accept application.";
+                return RedirectToAction(nameof(Applications), new { employerId = GetCurrentUserId() });
+            }
+
+            TempData["SuccessMessage"] = "Application accepted successfully.";
+            return RedirectToAction(nameof(Applications), new { employerId = GetCurrentUserId() });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectApplication(int applicationId)
+        {
+            var isRejected = await _applicationsServices.RejectApplicationAsync(applicationId, GetCurrentUserId());
+            if (!isRejected)
+            {
+                TempData["ErrorMessage"] = "Failed to reject application.";
+                return RedirectToAction(nameof(Applications), new { employerId = GetCurrentUserId() });
+            }
+
+            TempData["SuccessMessage"] = "Application rejected successfully.";
+            return RedirectToAction(nameof(Applications), new { employerId = GetCurrentUserId() });
         }
 
         // New: download CV for an application (employer access)

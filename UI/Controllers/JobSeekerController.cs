@@ -39,6 +39,15 @@ namespace UI.Controllers
             return $"/uploads/{folder}/{fileName}";
         }
 
+        // 0. Dashboard
+        [HttpGet]
+        public async Task<IActionResult> Dashboard()
+        {
+            var jobSeekerId = CurrentUserId;
+            var stats = await _queryService.GetDashboardsatsAsync(jobSeekerId);
+            return View(stats);
+        }
+
         // 1. Job Browsing
         public async Task<IActionResult> Browse(string keyword = null, int? categoryId = null, string employer = null, string location = null, string jobType = null, int page = 1)
         {

@@ -31,9 +31,20 @@
                 <td>@app.AppliedAt.ToString("yyyy-MM-dd")</td>
                 <td>@app.Status</td>
                 <td>
-                    <a asp-action="ApplicationDetails" asp-route-applicationId="@app.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="AcceptApplication" asp-route-applicationId="@app.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-sm btn-success">Accept</a>
-                    <a asp-action="RejectApplication" asp-route-applicationId="@app.Id" asp-route-employerId="@ViewBag.EmployerId" class="btn btn-sm btn-danger">Reject</a>
+                    <a asp-action="ApplicationDetails"
+                       asp-route-applicationId="@app.Id"
+                       asp-route-employerId="@ViewBag.EmployerId"
+                       class="btn btn-sm btn-info">Details</a>
+
+                    <form asp-action="AcceptApplication" asp-route-applicationId="@app.Id" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Accept this application?');">Accept</button>
+                    </form>
+
+                    <form asp-action="RejectApplication" asp-route-applicationId="@app.Id" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reject this application?');">Reject</button>
+                    </form>
                 </td>
             </tr>
         }
