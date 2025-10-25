@@ -372,22 +372,21 @@ namespace UI.Controllers
         }
 
         // New: download CV for an application (employer access)
-        public async Task<IActionResult> DownloadCv(int applicationId, int? employerId)
+        public async Task<IActionResult> DownloadCv(int applicationId)
         {
-            var id = employerId ?? GetCurrentUserId();
 
-            var application = await _applicationsServices.GetApplicationDetailsAsync(applicationId, id);
+            var application = await _applicationsServices.GetApplicationDetailsAsync(applicationId, GetCurrentUserId());
             if (application == null)
             {
                 TempData["ErrorMessage"] = "Application not found or you don't have permission.";
-                return RedirectToAction(nameof(Applications), new { employerId = id });
+                return RedirectToAction(nameof(Applications), new { employerId = GetCurrentUserId() });
             }
 
             var cvPath = application.CvFilePath;
             if (string.IsNullOrEmpty(cvPath))
             {
                 TempData["ErrorMessage"] = "No CV uploaded for this applicant.";
-                return RedirectToAction(nameof(ApplicationDetails), new { applicationId = applicationId, employerId = id });
+                return RedirectToAction(nameof(ApplicationDetails), new { applicationId = applicationId, employerId = GetCurrentUserId() });
             }
 
             // If it's an absolute URL, redirect to it
@@ -400,7 +399,7 @@ namespace UI.Controllers
             if (!System.IO.File.Exists(physicalPath))
             {
                 TempData["ErrorMessage"] = "CV file not found on server.";
-                return RedirectToAction(nameof(ApplicationDetails), new { applicationId = applicationId, employerId = id });
+                return RedirectToAction(nameof(ApplicationDetails), new { applicationId = applicationId, employerId = GetCurrentUserId() });
             }
 
             var fileName = Path.GetFileName(physicalPath);

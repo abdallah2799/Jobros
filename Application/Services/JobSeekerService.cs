@@ -46,19 +46,21 @@ namespace Application.Services
             var accepted = applications.Count(a => a.Status.Equals("Accepted", StringComparison.OrdinalIgnoreCase));
             var rejected = applications.Count(a => a.Status.Equals("Rejected", StringComparison.OrdinalIgnoreCase));
             var pending = applications.Count(a => a.Status.Equals("Pending", StringComparison.OrdinalIgnoreCase));
-
-
-            return new JobSeekerDashboardStatsDto
-            {
-                TopAppliedJobTitle = (await _uow.Applications
+            var topJobInfo = await _uow.Applications
                 .AsQueryable()
                 .Include(a => a.Job)
                 .Where(a => a.Status == "Pending")
                 .GroupBy(a => a.Job.Title)
-                .OrderByDescending(g => g.Count())
-                .Select(g => g.Key)
-                .FirstOrDefaultAsync())?? " No pending applications in the system ",
+                .Select(g => new { Title = g.Key, Count = g.Count() })
+                .OrderByDescending(x => x.Count)
+                .FirstOrDefaultAsync();
+
+            return new JobSeekerDashboardStatsDto
+            {
+                JobSeekerName = (await _uow.JobSeekers.AsQueryable().FirstOrDefaultAsync(j => j.Id == jobSeekerId))?.FullName ?? "Unknown",
                 TotalJobsAppliedFor = total,
+                TopAppliedJobTitle = topJobInfo?.Title ?? "No pending applications in the system",
+                TopAppliedJobApplicationsCount = topJobInfo?.Count ?? 0,
                 AcceptedApplications = accepted,
                 RejectedApplications = rejected,
                 PendingApplications = pending,

@@ -56,7 +56,7 @@
 
                     <div class="mb-3">
                         <label asp-for="ResumeFile" class="form-label">Upload CV (PDF/DOC/DOCX, max 5MB)</label>
-                        <input asp-for="ResumeFile" type="file" class="form-control" accept=":.pdf,.doc,.docx" />
+                        <input asp-for="ResumeFile" type="file" class="form-control" accept=".pdf,.doc,.docx" />
                         <div class="form-text">
                             @if (!string.IsNullOrEmpty(Model.Profile.ResumeUrl))
                             {
