@@ -1,52 +1,115 @@
 @model IEnumerable<Core.DTOs.EmployerDTOs.ApplicationsDTo>
 
 @{
+    ViewData["Title"] = "Applications";
     Layout = "_AdminLayout";
+    var status = (ViewBag.FilterStatus as string) ?? "";
 }
 
-<h2>Applications</h2>
-<form method="get" class="form-inline mb-3">
-    <input type="hidden" name="employerId" value="@ViewBag.EmployerId" />
-    <input type="text" name="jobTitle" value="@ViewBag.FilterJobTitle" placeholder="Job title" class="form-control mr-2" />
-    <input type="text" name="applicantName" value="@ViewBag.FilterApplicantName" placeholder="Applicant name" class="form-control mr-2" />
-    <button type="submit" class="btn btn-secondary">Filter</button>
-</form>
+<div class="container my-5">
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Job</th>
-            <th>Applicant</th>
-            <th>Applied</th>
-            <th>Status</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var app in Model)
-        {
-            <tr>
-                <td>@app.JobTitle</td>
-                <td>@app.ApplicantName</td>
-                <td>@app.AppliedAt.ToString("yyyy-MM-dd")</td>
-                <td>@app.Status</td>
-                <td>
-                    <a asp-action="ApplicationDetails"
-                       asp-route-applicationId="@app.Id"
-                       asp-route-employerId="@ViewBag.EmployerId"
-                       class="btn btn-sm btn-info">Details</a>
+    <h2 class="mb-5 text-center fw-bold" style="color: #00B074;">
+        &#128188; Applications
+    </h2>
 
-                    <form asp-action="AcceptApplication" asp-route-applicationId="@app.Id" method="post" style="display:inline;">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Accept this application?');">Accept</button>
-                    </form>
+    <!-- Alerts -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success text-center rounded-pill shadow-sm">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger text-center rounded-pill shadow-sm">
+            @TempData["ErrorMessage"]
+        </div>
+    }
 
-                    <form asp-action="RejectApplication" asp-route-applicationId="@app.Id" method="post" style="display:inline;">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Reject this application?');">Reject</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <!-- Filter Form -->
+    <form method="get" class="form-inline mb-4 d-flex gap-2 justify-content-center">
+        <input type="hidden" name="employerId" value="@ViewBag.EmployerId" />
+        <input type="text" name="jobTitle" value="@ViewBag.FilterJobTitle" placeholder="Job title" class="form-control" />
+        <input type="text" name="applicantName" value="@ViewBag.FilterApplicantName" placeholder="Applicant name" class="form-control" />
+        <button type="submit" class="btn btn-secondary">Filter</button>
+    </form>
+
+    <!-- Applications Table Card -->
+    <div class="card shadow-sm p-4" style="border-radius: 25px; border: 2px solid #ccc;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr style="background: linear-gradient(45deg, #00B074, #00B074); color: white;">
+                        <th style="border: none; padding: 1rem;">Job</th>
+                        <th style="border: none; padding: 1rem;">Applicant</th>
+                        <th style="border: none; padding: 1rem;">Applied</th>
+                        <th style="border: none; padding: 1rem;">Status</th>
+                        <th style="border: none; padding: 1rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var app in Model)
+                        {
+                            <tr style="transition: background-color 0.2s;"
+                                onmouseover="this.style.backgroundColor='#f0f9f5';"
+                                onmouseout="this.style.backgroundColor='';">
+                                <td>@app.JobTitle</td>
+                                <td>@app.ApplicantName</td>
+                                <td>@app.AppliedAt.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (app.Status == "Accepted")
+                                    {
+                                        <span class="badge rounded-pill text-bg-success px-3 py-2">Accepted</span>
+                                    }
+                                    else if (app.Status == "Rejected")
+                                    {
+                                        <span class="badge rounded-pill text-bg-danger px-3 py-2">Rejected</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill text-bg-secondary px-3 py-2">Pending</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a asp-action="ApplicationDetails"
+                                           asp-route-applicationId="@app.Id"
+                                           asp-route-employerId="@ViewBag.EmployerId"
+                                           class="btn btn-sm btn-info rounded-pill">
+                                            <i class="fas fa-eye"></i> Details
+                                        </a>
+
+                                        <form asp-action="AcceptApplication" asp-route-applicationId="@app.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-success rounded-pill" onclick="return confirm('Accept this application?');">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+
+                                        <form asp-action="RejectApplication" asp-route-applicationId="@app.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-danger rounded-pill" onclick="return confirm('Reject this application?');">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                <i class="fas fa-briefcase fa-2x mb-2 d-block" style="color: #ccc;"></i>
+                                No applications found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

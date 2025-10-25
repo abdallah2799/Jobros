@@ -1,0 +1,133 @@
+﻿@{
+    ViewData["Title"] = "Welcome to Jobros";
+}
+
+<!-- Hero Section -->
+<div class="container-fluid bg-primary text-white py-5 mb-5" style="background: linear-gradient(135deg, #00B074 0%, #007a54 100%) !important;">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-center text-lg-start mb-4 mb-lg-0">
+                <h1 class="display-3 fw-bold mb-3 text-white">Find Your Dream Job Today</h1>
+                <p class="fs-5 mb-4 text-white">Join thousands of job seekers who found their perfect career match with Jobros. Your next opportunity is just a click away!</p>
+                <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+                    <a asp-controller="Auth" asp-action="Register" class="btn btn-light btn-lg rounded-pill px-5 py-3">
+                        <i class="fa fa-rocket me-2"></i>Get Started
+                    </a>
+                    <a asp-controller="Jobs" asp-action="Index" class="btn btn-outline-light btn-lg rounded-pill px-5 py-3">
+                        Browse Jobs
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fa fa-search display-1 mb-3 d-block text-white"></i>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <span class="badge bg-light text-dark px-3 py-2 rounded-pill fs-6">
+                        <i class="fa fa-check-circle text-success me-1"></i>Fast Apply
+                    </span>
+                    <span class="badge bg-light text-dark px-3 py-2 rounded-pill fs-6">
+                        <i class="fa fa-check-circle text-success me-1"></i>Top Companies
+                    </span>
+                    <span class="badge bg-light text-dark px-3 py-2 rounded-pill fs-6">
+                        <i class="fa fa-check-circle text-success me-1"></i>Free Forever
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5" style="opacity: 0; transition: opacity 0.8s ease-in-out;" id="mainContent">
+    <!-- Stats Cards -->
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+        <div class="col">
+            <div class="card shadow-lg p-4 text-center border-0 rounded-4 h-100" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);">
+                <i class="fa fa-briefcase text-success mb-3" style="font-size: 2rem;"></i>
+                <h2 class="fw-bold display-4 text-success mb-2">120+</h2>
+                <h5 class="fw-semibold mb-2">Available Jobs</h5>
+                <p class="text-muted small">New positions added daily from leading companies</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-lg p-4 text-center border-0 rounded-4 h-100" style="background: linear-gradient(135deg, #d4edda 0%, #a8d5ba 100%);">
+                <i class="fa fa-building text-success mb-3" style="font-size: 2rem;"></i>
+                <h2 class="fw-bold display-4 text-success mb-2">50+</h2>
+                <h5 class="fw-semibold mb-2">Trusted Employers</h5>
+                <p class="text-muted small">Verified companies actively hiring talented professionals</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-lg p-4 text-center border-0 rounded-4 h-100" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);">
+                <i class="fa fa-file-alt text-warning mb-3" style="font-size: 2rem;"></i>
+                <h2 class="fw-bold display-4 text-warning mb-2">200+</h2>
+                <h5 class="fw-semibold mb-2">Applications Submitted</h5>
+                <p class="text-muted small">Join successful candidates finding their careers</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mb-5 py-5">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-5 fw-bold mb-3">Why Choose Jobros?</h1>
+            <p class="lead text-muted">Everything you need to land your perfect job</p>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="text-center p-4">
+                <i class="fa fa-bolt text-success mb-3" style="font-size: 3rem;"></i>
+                <h4 class="fw-bold mb-3">Quick Apply</h4>
+                <p class="text-muted">Apply to multiple jobs with just one click. Save time and increase your chances of getting hired.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="text-center p-4">
+                <i class="fa fa-shield-alt text-success mb-3" style="font-size: 3rem;"></i>
+                <h4 class="fw-bold mb-3">Verified Companies</h4>
+                <p class="text-muted">All employers are thoroughly vetted to ensure legitimacy and quality opportunities for you.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="text-center p-4">
+                <i class="fa fa-chart-line text-warning mb-3" style="font-size: 3rem;"></i>
+                <h4 class="fw-bold mb-3">Track Progress</h4>
+                <p class="text-muted">Monitor all your applications in one place and never miss an opportunity to follow up.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-body p-5 text-center text-white" style="background: linear-gradient(135deg, #00B074 0%, #00d084 100%);">
+                    <h2 class="fw-bold mb-3">Ready to Start Your Journey?</h2>
+                    <p class="lead mb-4">Create your free account today and unlock access to hundreds of exciting job opportunities. No credit card required!</p>
+                    <div class="d-inline-flex gap-3 flex-wrap justify-content-center">
+                        <a asp-controller="Auth" asp-action="Login" class="btn btn-light btn-lg rounded-pill px-4 shadow">
+                            Login
+                        </a>
+                        <a asp-controller="Auth" asp-action="Register" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                            Sign Up Free
+                        </a>
+                    </div>
+                    <p class="text-white-50 small mt-4 mb-0">
+                        <i class="fa fa-lock me-1" style=" font-size: 0.9rem;"></i>
+                        Your information is safe and secure with us
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            var content = document.getElementById('mainContent');
+            if (content) {
+                content.style.opacity = '1';
+            }
+        }, 800);
+    });
+</script>

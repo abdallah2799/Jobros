@@ -245,7 +245,7 @@ namespace UI.Controllers
         public async Task<IActionResult> Logout()
         {
             await _authService.LogoutAsync();
-            return RedirectToAction("Login");
+            return RedirectToAction("WelcometoJobros", "Home");
         }
         #endregion
     }
