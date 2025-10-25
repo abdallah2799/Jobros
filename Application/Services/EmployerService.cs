@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Office.PowerPoint.Y2021.M06.Main;
 
 namespace Application.Services
 {
@@ -41,6 +42,52 @@ namespace Application.Services
             _emailService = emailService;
             _reportExportService = reportExportService;
             _logger = logger;
+        }
+
+        // Dashboard
+
+        async Task<EmployerDashboardStatsDto> IProfileService.GetDashboardStatsAsync(int employerId)
+        {
+            return new EmployerDashboardStatsDto
+            {
+                TotalJobsPosted = await _uow.Jobs
+                .AsQueryable()
+                .CountAsync(j => j.EmployerId == employerId),
+                ActiveJobs = await _uow.Jobs
+                .AsQueryable()
+                .CountAsync(j => j.EmployerId == employerId && j.IsActive),
+                TotalApplications = await _uow.Applications
+                .AsQueryable()
+                .Include(a => a.Job)
+                .CountAsync(a => a.Job.EmployerId == employerId),
+                PendingApplications = await _uow.Applications
+                .AsQueryable()
+                .Include(a => a.Job)
+                .CountAsync(a => a.Job.EmployerId == employerId && a.Status == "Pending"),
+
+
+                RecentApplications = (await _uow.Applications
+                .AsQueryable()
+                .Include(a => a.Job)
+                .Include(a => a.JobSeeker)
+                .Where(a => a.Job.EmployerId == employerId)
+                .OrderByDescending(a => a.AppliedAt)
+                .Take(5)
+                .ToListAsync())
+                .Select(a => new ApplicationsDTo
+                {
+                    Id = a.Id,
+                    JobTitle = a.Job.Title,
+                    ApplicantName = a.JobSeeker?.FullName ?? "unKnown",
+                    ApplicantEmail = a.JobSeeker?.Email ?? "unKnown",
+                    Status = a.Status,
+                    AppliedAt = a.AppliedAt,
+                }).ToList()
+
+
+
+
+            };
         }
 
         async Task<bool> IJobService.ActivateJobAsync(int jobId, int employerId)

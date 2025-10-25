@@ -31,7 +31,5 @@ namespace Core.DTOs.Job
         public string JobType { get; set; }
 
         public bool? IsActive { get; set; }
-        public int EmployerId { get; set; }
-        public string CompanyName { get; set; }
     }
 }
