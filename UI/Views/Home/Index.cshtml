@@ -1,42 +1,104 @@
 ﻿@{
     ViewData["Title"] = "Home Dashboard";
+    var role = ViewBag.Role as string;
 }
 
 <div class="container my-5">
-
     <h1 class="text-center mb-5">Welcome to Jobros</h1>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
 
-        <!-- Jobs Overview -->
-        <div class="col d-flex">
-            <div class="card shadow-sm p-4 text-center border-success border-2 rounded-3 animate__animated animate__fadeInUp w-100 d-flex flex-column justify-content-between" style="background-color: #ffffff;">
-                <i class="bi bi-briefcase-fill fs-1 text-success mb-3"></i>
-                <h3 class="fw-bold">@ViewBag.JobsCount Jobs</h3>
-                <p class="text-muted">Available jobs</p>
-                <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-success mt-2 rounded-pill px-4">Manage Jobs</a>
+        @* -------------------- Admin Cards -------------------- *@
+        @if (role == "Admin")
+        {
+            <div class="col d-flex">
+                <div class="card shadow-sm p-4 text-center border-primary border-2 rounded-3 animate__animated animate__fadeInUp w-100 d-flex flex-column justify-content-between">
+                    <i class="bi bi-people-fill fs-1 text-primary mb-3"></i>
+                    <h3 class="fw-bold">@ViewBag.TotalUsers Users</h3>
+                    <p class="text-muted">Total registered users today</p>
+                    <a asp-controller="Admin" asp-action="UserManagement" class="btn btn-primary mt-2 rounded-pill px-4">View Users</a>
+                </div>
             </div>
-        </div>
 
-        <!-- New Employers -->
-        <div class="col d-flex">
-            <div class="card shadow-sm p-4 text-center border-success border-2 rounded-3 animate__animated animate__fadeInUp animate__delay-1s w-100 d-flex flex-column justify-content-between" style="background-color: #ffffff;">
-                <i class="bi bi-building fs-1 text-success mb-3"></i>
-                <h3 class="fw-bold">@ViewBag.NewEmployersCount Employers</h3>
-                <p class="text-muted">Newly registered companies</p>
-                <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-success mt-2 rounded-pill px-4">Review Employers</a>
+            <div class="col d-flex">
+                <div class="card shadow-sm p-4 text-center border-success border-2 rounded-3 animate__animated animate__fadeInUp animate__delay-1s w-100 d-flex flex-column justify-content-between">
+                    <i class="bi bi-briefcase-fill fs-1 text-success mb-3"></i>
+                    <h3 class="fw-bold">@ViewBag.ActiveJobs Jobs</h3>
+                    <p class="text-muted">Jobs currently available</p>
+                    <a asp-controller="Admin" asp-action="JobOversight" class="btn btn-success mt-2 rounded-pill px-4">Manage Jobs</a>
+                </div>
             </div>
-        </div>
 
-        <!-- New Applications -->
-        <div class="col d-flex">
-            <div class="card shadow-sm p-4 text-center border-warning border-2 rounded-3 animate__animated animate__fadeInUp animate__delay-2s w-100 d-flex flex-column justify-content-between" style="background-color: #ffffff;">
-                <i class="bi bi-file-earmark-text fs-1 text-warning mb-3"></i>
-                <h3 class="fw-bold">@ViewBag.NewApplicationsCount Applications</h3>
-                <p class="text-muted">New applications</p>
-                <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-warning mt-2 rounded-pill px-4">View Applications</a>
+            <div class="col d-flex">
+                <div class="card shadow-sm p-4 text-center border-warning border-2 rounded-3 animate__animated animate__fadeInUp animate__delay-2s w-100 d-flex flex-column justify-content-between">
+                    <i class="bi bi-file-earmark-text fs-1 text-warning mb-3"></i>
+                    <h3 class="fw-bold">@ViewBag.NewApplicationsCount Applications</h3>
+                    <p class="text-muted">Applications submitted today</p>
+                    <a asp-controller="Admin" asp-action="OverdueApplications" class="btn btn-warning mt-2 rounded-pill px-4">View Applications</a>
+                </div>
             </div>
-        </div>
+        }
 
+        @* -------------------- Employer Cards -------------------- *@
+        else if (role == "Employer")
+        {
+            <div class="col d-flex">
+                <div class="card shadow-sm p-4 text-center border-primary border-2 rounded-3 animate__animated animate__fadeInUp w-100 d-flex flex-column justify-content-between">
+                    <i class="bi bi-briefcase-fill fs-1 text-primary mb-3"></i>
+                    <h3 class="fw-bold">@ViewBag.MyJobsCount Jobs</h3>
+                    <p class="text-muted">Jobs you posted recently</p>
+                    <a asp-controller="Employer" asp-action="Jobs" class="btn btn-primary mt-2 rounded-pill px-4">My Jobs</a>
+                </div>
+            </div>
+
+            <div class="col d-flex">
+                <div class="card shadow-sm p-4 text-center border-success border-2 rounded-3 animate__animated animate__fadeInUp animate__delay-1s w-100 d-flex flex-column justify-content-between">
+                    <i class="bi bi-people-fill fs-1 text-success mb-3"></i>
+                    <h3 class="fw-bold">@ViewBag.PendingApplications Pending</h3>
+                    <p class="text-muted">Applications waiting for your review</p>
+                    <a asp-controller="Employer" asp-action="Dashboard" class="btn btn-success mt-2 rounded-pill px-4">Pending Apps</a>
+                </div>
+            </div>
+
+            <div class="col d-flex">
+                <div class="card shadow-sm p-4 text-center border-warning border-2 rounded-3 animate__animated animate__fadeInUp animate__delay-2s w-100 d-flex flex-column justify-content-between">
+                    <i class="bi bi-clock-history fs-1 text-warning mb-3"></i>
+                    <h3 class="fw-bold">@ViewBag.RecentApplicantsCount Applicants</h3>
+                    <p class="text-muted">Applicants applied recently</p>
+                    <a asp-controller="Employer" asp-action="Dashboard" class="btn btn-warning mt-2 rounded-pill px-4">Recent Applicants</a>
+                </div>
+            </div>
+        }
+
+        @* -------------------- JobSeeker Cards -------------------- *@
+        else if (role == "JobSeeker")
+        {
+            <div class="col d-flex">
+                <div class="card shadow-sm p-4 text-center border-primary border-2 rounded-3 animate__animated animate__fadeInUp w-100 d-flex flex-column justify-content-between">
+                    <i class="bi bi-file-earmark-check-fill fs-1 text-primary mb-3"></i>
+                    <h3 class="fw-bold">@ViewBag.MyAppliedJobsCount Jobs</h3>
+                    <p class="text-muted">Jobs you applied for recently</p>
+                    <a asp-controller="JobSeeker" asp-action="Applications" class="btn btn-primary mt-2 rounded-pill px-4">My Applications</a>
+                </div>
+            </div>
+
+            <div class="col d-flex">
+                <div class="card shadow-sm p-4 text-center border-success border-2 rounded-3 animate__animated animate__fadeInUp animate__delay-1s w-100 d-flex flex-column justify-content-between">
+                    <i class="bi bi-briefcase-fill fs-1 text-success mb-3"></i>
+                    <h3 class="fw-bold">@ViewBag.AvailableJobsCount Jobs</h3>
+                    <p class="text-muted">Jobs you can still apply for</p>
+                    <a asp-controller="JobSeeker" asp-action="Browse" class="btn btn-success mt-2 rounded-pill px-4">Browse Jobs</a>
+                </div>
+            </div>
+
+            <div class="col d-flex">
+                <div class="card shadow-sm p-4 text-center border-warning border-2 rounded-3 animate__animated animate__fadeInUp animate__delay-2s w-100 d-flex flex-column justify-content-between">
+                    <i class="bi bi-hourglass-split fs-1 text-warning mb-3"></i>
+                    <h3 class="fw-bold">@ViewBag.PendingApplications Pending</h3>
+                    <p class="text-muted">Applications awaiting employer decision</p>
+                    <a asp-controller="JobSeeker" asp-action="Dashboard" class="btn btn-warning mt-2 rounded-pill px-4">Pending Apps</a>
+                </div>
+            </div>
+        }
     </div>
 </div>
