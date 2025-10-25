@@ -42,7 +42,9 @@ namespace Application.Services
                 TotalUsers = await _userManager.Users.CountAsync(),
                 PendingApprovals = await _userManager.Users.OfType<Employer>().CountAsync(e => !e.IsVerified),
                 ActiveJobs = await _unitOfWork.Jobs.AsQueryable().CountAsync(j => j.IsActive),
-                TotalApplications = await _unitOfWork.Applications.AsQueryable().CountAsync()
+                TotalApplications = await _unitOfWork.Applications.AsQueryable().CountAsync(),
+                TotalEmployers = await _userManager.Users.OfType<Employer>().CountAsync(),
+                TotalJobSeekers = await _userManager.Users.OfType<JobSeeker>().CountAsync()
             };
         }
 
