@@ -1,4 +1,6 @@
-﻿@{
+﻿@model WelcomePageViewModel
+
+@{
     ViewData["Title"] = "Welcome to Jobros";
 }
 
@@ -42,7 +44,7 @@
         <div class="col">
             <div class="card shadow-lg p-4 text-center border-0 rounded-4 h-100" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);">
                 <i class="fa fa-briefcase text-success mb-3" style="font-size: 2rem;"></i>
-                <h2 class="fw-bold display-4 text-success mb-2">120+</h2>
+                <h2 class="fw-bold display-4 text-success mb-2">@Model.AvailableJobs</h2>
                 <h5 class="fw-semibold mb-2">Available Jobs</h5>
                 <p class="text-muted small">New positions added daily from leading companies</p>
             </div>
@@ -50,7 +52,7 @@
         <div class="col">
             <div class="card shadow-lg p-4 text-center border-0 rounded-4 h-100" style="background: linear-gradient(135deg, #d4edda 0%, #a8d5ba 100%);">
                 <i class="fa fa-building text-success mb-3" style="font-size: 2rem;"></i>
-                <h2 class="fw-bold display-4 text-success mb-2">50+</h2>
+                <h2 class="fw-bold display-4 text-success mb-2">@Model.Employers</h2>
                 <h5 class="fw-semibold mb-2">Trusted Employers</h5>
                 <p class="text-muted small">Verified companies actively hiring talented professionals</p>
             </div>
@@ -58,7 +60,7 @@
         <div class="col">
             <div class="card shadow-lg p-4 text-center border-0 rounded-4 h-100" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);">
                 <i class="fa fa-file-alt text-warning mb-3" style="font-size: 2rem;"></i>
-                <h2 class="fw-bold display-4 text-warning mb-2">200+</h2>
+                <h2 class="fw-bold display-4 text-warning mb-2">@Model.ApplicationsSubmitted</h2>
                 <h5 class="fw-semibold mb-2">Applications Submitted</h5>
                 <p class="text-muted small">Join successful candidates finding their careers</p>
             </div>

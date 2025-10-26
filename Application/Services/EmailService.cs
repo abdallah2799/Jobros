@@ -35,6 +35,21 @@ namespace Infrastructure.Services
             }
         }
 
+        public async Task SendEmailAsync(string fromName,string fromEmail, string subject, string htmlContent, string plainTextContent = null)
+        {
+            var from = new EmailAddress(fromEmail, fromName);
+            var to = new EmailAddress(_config["SendGrid:FromEmail"]);
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent ?? "", htmlContent);
+            var response = await _client.SendEmailAsync(msg);
+            if (!response.IsSuccessStatusCode)
+            {
+                var body = await response.Body.ReadAsStringAsync();
+                throw new Exception($"SendGrid error: {response.StatusCode} - {body}");
+            }
+
+        }
+
+
         public async Task<bool> PingAsync()
         {
             try
