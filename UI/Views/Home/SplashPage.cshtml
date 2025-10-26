@@ -1,4 +1,5 @@
-﻿﻿@{
+﻿@model SplashPageViewModel
+@{
 Layout = "_Layout";
 ViewData["Title"] = "SplashPage";
 }
@@ -39,45 +40,49 @@ ViewData["Title"] = "SplashPage";
     </div>
 </div>
 
+<!-- Search Form -->
 <div class="container-fluid bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="padding: 35px;">
     <div class="container">
-        <div class="row g-2">
-            <div class="col-md-10">
-                <div class="row g-2">
-                    <div class="col-md-4">
-                        <input type="text" class="form-control border-0" placeholder="Keyword" />
-                    </div>
-                    <div class="col-md-4">
-                        <select class="form-select border-0">
-                            <option selected disabled>Choose Category</option>
-                            <option value="IT">IT / Software</option>
-                            <option value="Finance">Finance</option>
-                            <option value="Education">Education</option>
-                            <option value="Sales">Sales & Marketing</option>
-                            <option value="Healthcare">Healthcare</option>
+        <form asp-controller="Jobs" asp-action="Index" method="get">
+            <div class="row g-2">
+                <div class="col-md-10">
+                    <div class="row g-2">
+                        <!-- Keyword -->
+                        <div class="col-md-4">
+                            <input type="text" class="form-control border-0" name="keyword" placeholder="Keyword" />
+                        </div>
 
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <select class="form-select border-0" name="Location">
-                            <option selected disabled>Choose Location</option>
-                            <option value="Cairo">Cairo</option>
-                            <option value="Giza">Giza</option>
-                            <option value="Alexandria">Alexandria</option>
-                            <option value="Aswan">Aswan</option>
-                            <option value="Remote">Remote</option>
-                        </select>
+                        <!-- Category -->
+                        <div class="col-md-4">
+                            <select class="form-select border-0" name="categoryId">
+                                <option value="">Choose Category</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category">@category</option>
+                                }
+                            </select>
+                        </div>
 
+                        <!-- Location -->
+                        <div class="col-md-4">
+                            <select class="form-select border-0" name="location">
+                                <option value="">Choose Location</option>
+                                @foreach (var location in Model.Locations)
+                                {
+                                    <option value="@location">@location</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100 border-0 text-center">Search</button>
+                </div>
             </div>
-            <div class="col-md-2">
-                <a asp-controller="Auth" asp-action="Login" class="btn btn-dark w-100 border-0 text-center">Search</a>
-
-            </div>
-        </div>
+        </form>
     </div>
 </div>
+
 
 
 <div class="container-xxl py-5 wow fadeInUp" ">

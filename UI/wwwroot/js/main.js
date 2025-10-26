@@ -26,16 +26,22 @@
     });
     
     
-    // Back to top button
-    $(window).scroll(function () {
-        if ($(this).scrollTop() > 300) {
-            $('.back-to-top').fadeIn('slow');
-        } else {
-            $('.back-to-top').fadeOut('slow');
-        }
-    });
-    $('.back-to-top').click(function () {
-        $('html, body').animate({scrollTop: 0}, 1500, 'easeInOutExpo');
+    $('.back-to-top').click(function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation(); // Stop all events
+
+        // Chrome-specific fix: Use direct scrollTop instead of animate
+        var scrollDuration = 400;
+        var scrollStep = -window.scrollY / (scrollDuration / 15);
+
+        var scrollInterval = setInterval(function () {
+            if (window.scrollY != 0) {
+                window.scrollBy(0, scrollStep);
+            } else {
+                clearInterval(scrollInterval);
+            }
+        }, 15);
+
         return false;
     });
 

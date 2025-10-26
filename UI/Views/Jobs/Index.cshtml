@@ -1,6 +1,7 @@
-﻿@model UI.Models.JobSeeker.BrowseJobsViewModel
+﻿
+@model UI.Models.JobSeeker.BrowseJobsViewModel
 @{
-    ViewData["Title"] = "Browse Jobs";
+    ViewData["Title"] = "Browse Jobs User";
 }
 
 <!-- Hero Start -->
@@ -9,12 +10,6 @@
         <div class="row justify-content-center">
             <div class="col-lg-10 text-center">
                 <h1 class="display-3 text-white animated slideInDown">Find Your Dream Job</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a class="text-white" href="/">DashBoard</a></li>
-                        <li class="breadcrumb-item text-white active" aria-current="page">Jobs</li>
-                    </ol>
-                </nav>
             </div>
         </div>
     </div>
@@ -86,7 +81,7 @@
                                     <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
                                         <div class="d-flex mb-3">
                                             <a class="btn btn-light btn-square me-3" href="#"><i class="far fa-heart text-primary"></i></a>
-                                            <a class="btn btn-primary" asp-action="Details" asp-route-id="@job.Id">Apply Now</a>
+                                            <a class="btn btn-primary" asp-controller="Jobs" asp-action="Details" asp-route-id="@job.Id">Apply Now</a>
                                         </div>
                                         <small class="text-truncate">
                                             <i class="far fa-calendar-alt text-primary me-2"></i>

@@ -1,4 +1,13 @@
-﻿@{
+﻿@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success text-center" style="width: 700px;">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger text-center" style="width: 700px;">@TempData["ErrorMessage"]</div>
+}
+
+@{
     ViewData["Title"] = "Contact";
 }
 
@@ -15,30 +24,30 @@
 
         <!-- Card Body -->
         <div class="card-body p-4" style="color: black;">
-            <form id="contact-form">
+            <form asp-action="SendEmailContact" asp-controller="Home" method="post" id="contact-form">
                 <div class="row g-3">
                     <!-- First Name -->
                     <div class="col-md-6">
-                        <label for="firstName" class="form-label fw-semibold">First Name</label>
-                        <input type="text" class="form-control form-input" id="firstName" placeholder="Enter your first name" required>
+                        <label for="FirstName" class="form-label fw-semibold">First Name</label>
+                        <input type="text" class="form-control form-input" id="FirstName" name="FirstName" placeholder="Enter your first name" required>
                     </div>
 
                     <!-- Last Name -->
                     <div class="col-md-6">
-                        <label for="lastName" class="form-label fw-semibold">Last Name</label>
-                        <input type="text" class="form-control form-input" id="lastName" placeholder="Enter your last name" required>
+                        <label for="LastName" class="form-label fw-semibold">Last Name</label>
+                        <input type="text" class="form-control form-input" id="LastName" name="LastName" placeholder="Enter your last name" required>
                     </div>
 
                     <!-- Email -->
                     <div class="col-12">
-                        <label for="email" class="form-label fw-semibold">Email Address</label>
-                        <input type="email" class="form-control form-input" id="email" placeholder="Enter your email" required>
+                        <label for="Email" class="form-label fw-semibold">Email Address</label>
+                        <input type="email" class="form-control form-input" id="Email" name="Email" placeholder="Enter your email" required>
                     </div>
 
                     <!-- Subject -->
                     <div class="col-12">
-                        <label for="subject" class="form-label fw-semibold">Subject</label>
-                        <select class="form-select form-input" id="subject" required>
+                        <label for="Subject" class="form-label fw-semibold">Subject</label>
+                        <select class="form-select form-input" id="Subject" name="Subject" required>
                             <option value="">Select a subject</option>
                             <option value="account">Account Issue</option>
                             <option value="job-posting">Job Posting Inquiry</option>
@@ -51,14 +60,14 @@
 
                     <!-- Message -->
                     <div class="col-12">
-                        <label for="message" class="form-label fw-semibold">Message</label>
-                        <textarea class="form-control form-input" id="message" rows="5" placeholder="Tell us how we can help you..." required></textarea>
+                        <label for="Message" class="form-label fw-semibold">Message</label>
+                        <textarea class="form-control form-input" id="Message" name="Message" rows="5" placeholder="Tell us how we can help you..." required></textarea>
                     </div>
 
                     <!-- Newsletter -->
                     <div class="col-12 form-check mt-2">
-                        <input class="form-check-input" type="checkbox" id="newsletter">
-                        <label class="form-check-label fw-semibold" for="newsletter">
+                        <input class="form-check-input" type="checkbox" id="SubscribeToNewsletter" name="SubscribeToNewsletter" value="true">
+                        <label class="form-check-label fw-semibold" for="SubscribeToNewsletter">
                             Subscribe to our newsletter for updates and offers
                         </label>
                     </div>
@@ -66,18 +75,11 @@
                     <!-- Send Button -->
                     <div class="d-grid mt-3" style="width: 50%; margin: 0 auto;">
                         <button type="submit" class="btn btn-add-cart btn-lg"
-                                style="font-size: 1.1rem;
-                                      display: flex;
-                                      align-items: center;
-                                      justify-content: center;
-                                      gap: 0.5rem;
-                                      background: linear-gradient(45deg, #00B074, #00B074);
-                                      border: 2px solid #00B074;
-                                      color: white;
-                                      border-radius: 15px;">
+                                style="font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(45deg, #00B074, #00B074); border: 2px solid #00B074; color: white; border-radius: 15px;">
                             Send Message
                         </button>
                     </div>
+                </div>
             </form>
         </div>
     </div>
